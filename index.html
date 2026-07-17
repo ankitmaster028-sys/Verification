@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Telegram Verification</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #F8FBFF;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #1E293B;
+            padding: 20px;
+        }
+
+        .verification-card {
+            background: #FFFFFF;
+            border-radius: 24px;
+            padding: 36px 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
+            animation: cardPop 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes cardPop {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .icon-svg {
+            width: 38px;
+            height: 38px;
+            fill: #3B82F6;
+            transition: all 0.4s ease;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1E293B;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #64748B;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            padding: 0 10px;
+        }
+
+        .info-card {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 32px;
+            text-align: left;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .info-icon-svg {
+            width: 20px;
+            height: 20px;
+            fill: #3B82F6;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .info-content h2 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2563EB;
+            margin-bottom: 4px;
+        }
+
+        .info-content p {
+            font-size: 12.5px;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .status-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3.5px solid rgba(59, 130, 246, 0.15);
+            border-top-color: #3B82F6;
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-checkmark {
+            display: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #10B981;
+            position: relative;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+            animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .success-checkmark::after {
+            content: '';
+            position: absolute;
+            left: 21px;
+            top: 13px;
+            width: 11px;
+            height: 22px;
+            border: solid white;
+            border-width: 0 4px 4px 0;
+            transform: rotate(45deg);
+        }
+
+        .error-cross {
+            display: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #EF4444;
+            position: relative;
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+            animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .error-cross::before, .error-cross::after {
+            content: '';
+            position: absolute;
+            height: 22px;
+            width: 4px;
+            background: white;
+            top: 17px;
+            left: 26px;
+            border-radius: 2px;
+        }
+        .error-cross::before { transform: rotate(45deg); }
+        .error-cross::after { transform: rotate(-45deg); }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .status-message {
+            margin-top: 24px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #475569;
+            transition: color 0.3s ease;
+        }
+
+        .text-success { color: #10B981; }
+        .text-error { color: #EF4444; }
+
+        .redirect-text {
+            font-size: 13px;
+            color: #94A3B8;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
+        .hidden { display: none !important; }
+
+        .debug-info {
+            font-size: 11px;
+            color: #64748B;
+            margin-top: 16px;
+            word-break: break-all;
+            text-align: left;
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            max-height: 200px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .debug-info strong {
+            color: #1e293b;
+        }
+
+        .debug-info .error-line {
+            color: #dc2626;
+        }
+
+        .debug-info .success-line {
+            color: #16a34a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="verification-card">
+        <div class="icon-container" id="appIconContainer">
+            <svg class="icon-svg" id="appIcon" viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6c1.4 0 2.5 1.1 2.5 2.5 0 .95-.53 1.78-1.3 2.2l.8 3.8h-4l.8-3.8c-.77-.42-1.3-1.25-1.3-2.2C9.5 8.1 10.6 7 12 7z"/>
+            </svg>
+        </div>
+
+        <h1 id="mainTitle">Device Verification</h1>
+        <p class="subtitle" id="mainSubtitle">Please wait while we verify your device.</p>
+
+        <div class="info-card" id="infoCard">
+            <svg class="info-icon-svg" viewBox="0 0 24 24">
+                <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-11v6h2v-6h-2zm0-4v2h2V7h-2z"/>
+            </svg>
+            <div class="info-content">
+                <h2>Why is verification required?</h2>
+                <p>To stop refer bypass with multiple accounts and keep rewards fair for everyone, we verify that each Telegram account is being used legitimately. Your personal files, photos, messages, contacts, and private data are never accessed.</p>
+            </div>
+        </div>
+
+        <div class="status-wrapper">
+            <div class="spinner" id="iconSpinner"></div>
+            <div class="success-checkmark" id="iconSuccess"></div>
+            <div class="error-cross" id="iconError"></div>
+
+            <p class="status-message" id="statusText">Loading script...</p>
+            <p class="redirect-text hidden" id="redirectText">Redirecting to bot chat...</p>
+        </div>
+
+        <div class="debug-info" id="debugInfo"><strong>Debug Log:</strong><br></div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            var API_BASE = 'https://otp-api-inky.vercel.app';
+            var tg = null;
+            var userId = null;
+            var initData = '';
+            var retryCount = 0;
+            var MAX_RETRIES = 30;
+
+            function getEl(id) {
+                try { return document.getElementById(id); } catch(e) { return null; }
+            }
+
+            function setText(id, text) {
+                try {
+                    var el = getEl(id);
+                    if (el) el.textContent = text;
+                } catch(e) {}
+            }
+
+            function setHTML(id, html) {
+                try {
+                    var el = getEl(id);
+                    if (el) el.innerHTML = html;
+                } catch(e) {}
+            }
+
+            function setClass(id, className) {
+                try {
+                    var el = getEl(id);
+                    if (el) el.className = className;
+                } catch(e) {}
+            }
+
+            function hide(id) {
+                try {
+                    var el = getEl(id);
+                    if (el) el.style.display = 'none';
+                } catch(e) {}
+            }
+
+            function show(id) {
+                try {
+                    var el = getEl(id);
+                    if (el) el.classList.remove('hidden');
+                } catch(e) {}
+            }
+
+            function log(msg, isError) {
+                try {
+                    console.log('[Verify]', msg);
+                    var debugEl = getEl('debugInfo');
+                    if (debugEl) {
+                        var lineClass = isError ? 'error-line' : '';
+                        var prefix = isError ? '❌ ' : '➤ ';
+                        debugEl.innerHTML += '<span class="' + lineClass + '">' + prefix + String(msg).replace(/</g, '&lt;') + '</span><br>';
+                    }
+                } catch(e) {
+                    console.error('Log failed:', e);
+                }
+            }
+
+            // ============================================
+            // FIXED FEAT: Safe Padding Helper (Replaces padStart)
+            // ============================================
+            function padLeft(str, length, char) {
+                var s = String(str);
+                while (s.length < length) {
+                    s = char + s;
+                }
+                return s;
+            }
+
+            function generateSafeHash(str) {
+                try {
+                    var h1 = 5381, h2 = 52711;
+                    for (var i = 0; i < str.length; i++) {
+                        var char = str.charCodeAt(i);
+                        h1 = ((h1 << 5) + h1) ^ char;
+                        h2 = ((h2 << 5) + h2) ^ char;
+                    }
+                    var cleanPart1 = padLeft((h1 >>> 0).toString(16), 8, '0');
+                    var cleanPart2 = padLeft((h2 >>> 0).toString(16), 8, '0');
+                    var combinedHex = cleanPart1 + cleanPart2 + cleanPart1 + cleanPart2;
+                    
+                    while (combinedHex.length < 64) {
+                        combinedHex += 'a';
+                    }
+                    return combinedHex.substring(0, 64);
+                } catch(e) {
+                    var fallback = '';
+                    while (fallback.length < 64) fallback += 'a';
+                    return fallback;
+                }
+            }
+
+            // ============================================
+            // ASYNC REPLACED WITH PROMISES FOR MAXIMUM COMPATIBILITY
+            // ============================================
+            function generateFingerprint() {
+                return new Promise(function(resolve) {
+                    try {
+                        var components = [];
+
+                        try {
+                            var canvas = document.createElement('canvas');
+                            var ctx = canvas.getContext('2d');
+                            ctx.fillText('DevilBot FP v2.2', 2, 2);
+                            components.push('canvas:' + canvas.toDataURL().slice(-50));
+                        } catch(e) {}
+
+                        try {
+                            var gl = document.createElement('canvas').getContext('webgl');
+                            if (gl) components.push('webgl:' + gl.getParameter(gl.VERSION));
+                        } catch(e) {}
+
+                        components.push('screen:' + screen.width + 'x' + screen.height + 'x' + screen.colorDepth);
+                        components.push('dpr:' + window.devicePixelRatio);
+                        components.push('cores:' + (navigator.hardwareConcurrency || 'unknown'));
+                        components.push('lang:' + navigator.language);
+                        components.push('platform:' + navigator.platform);
+                        components.push('ua:' + navigator.userAgent.substring(0, 100));
+
+                        var combined = components.join('||');
+                        log('FP components: ' + components.length);
+
+                        if (window.crypto && window.crypto.subtle) {
+                            window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(combined))
+                                .then(function(hashBuffer) {
+                                    var hashArray = Array.from(new Uint8Array(hashBuffer));
+                                    var hex = hashArray.map(function(b) { 
+                                        return padLeft(b.toString(16), 2, '0'); 
+                                    }).join('');
+                                    resolve(hex);
+                                })
+                                .catch(function(e) {
+                                    resolve(generateSafeHash(combined));
+                                });
+                        } else {
+                            resolve(generateSafeHash(combined));
+                        }
+                    } catch(e) {
+                        log('Fingerprint error: ' + e.message, true);
+                        resolve(generateSafeHash(navigator.userAgent));
+                    }
+                });
+            }
+
+            function getIP() {
+                return new Promise(function(resolve) {
+                    try {
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('GET', 'https://api.ipify.org?format=json', true);
+                        xhr.timeout = 3500;
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState === 4) {
+                                if (xhr.status === 200) {
+                                    try {
+                                        var data = JSON.parse(xhr.responseText);
+                                        log('IP: ' + data.ip);
+                                        resolve(data.ip);
+                                    } catch(e) {
+                                        resolve(null);
+                                    }
+                                } else {
+                                    resolve(null);
+                                }
+                            }
+                        };
+                        xhr.ontimeout = function() { resolve(null); };
+                        xhr.onerror = function() { resolve(null); };
+                        xhr.send();
+                    } catch(e) {
+                        log('IP fetch failed: ' + e.message, true);
+                        resolve(null);
+                    }
+                });
+            }
+
+            function automaticVerificationFlow() {
+                try {
+                    log('Verification starting...');
+                    setText('statusText', 'Checking hardware...');
+
+                    generateFingerprint().then(function(fingerprint) {
+                        getIP().then(function(ip) {
+                            setText('statusText', 'Sending data...');
+                            log('POST to: ' + API_BASE + '/api/verify-device');
+
+                            var payload = {
+                                userId: userId ? String(userId) : '',
+                                fingerprint: fingerprint,
+                                ipAddress: ip,
+                                userAgent: navigator.userAgent,
+                                screenResolution: screen.width + 'x' + screen.height,
+                                platform: navigator.platform,
+                                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                                initData: initData,
+                                timestamp: Date.now()
+                            };
+
+                            log('Payload userId: ' + payload.userId);
+
+                            try {
+                                var xhr = new XMLHttpRequest();
+                                xhr.open('POST', API_BASE + '/api/verify-device', true);
+                                xhr.setRequestHeader('Content-Type', 'application/json');
+                                xhr.setRequestHeader('Accept', 'application/json');
+                                
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === 4) {
+                                        log('Response status: ' + xhr.status);
+                                        if (xhr.status >= 200 && xhr.status < 300) {
+                                            try {
+                                                var result = JSON.parse(xhr.responseText);
+                                                log('Result: ' + JSON.stringify(result).substring(0, 150));
+                                                
+                                                hide('infoCard');
+                                                if (result.success) {
+                                                    var spinner = getEl('iconSpinner');
+                                                    var success = getEl('iconSuccess');
+                                                    if (spinner) spinner.style.display = 'none';
+                                                    if (success) success.style.display = 'block';
+
+                                                    var iconContainer = getEl('appIconContainer');
+                                                    var appIcon = getEl('appIcon');
+                                                    if (iconContainer) iconContainer.style.background = 'rgba(16, 185, 129, 0.1)';
+                                                    if (appIcon) appIcon.style.fill = '#10B981';
+
+                                                    setText('mainTitle', 'Verification Complete');
+                                                    setText('mainSubtitle', 'Your device has been verified successfully.');
+                                                    setClass('statusText', 'status-message text-success');
+                                                    setText('statusText', 'Success! Features Unlocked ✅');
+                                                    show('redirectText');
+
+                                                    if (tg) {
+                                                        setTimeout(function() {
+                                                            try { tg.close(); } catch(e) {}
+                                                        }, 2500);
+                                                    }
+                                                } else {
+                                                    showError('Access Denied: ' + (result.message || 'Verification rejected.'));
+                                                }
+                                            } catch(e) {
+                                                log('JSON parse error: ' + e.message, true);
+                                                showError('Server returned invalid response.');
+                                            }
+                                        } else {
+                                            log('Non-200 response', true);
+                                            showError('Connection error: ' + xhr.status);
+                                        }
+                                    }
+                                };
+                                xhr.onerror = function() {
+                                    showError('Network error occurred.');
+                                };
+                                xhr.send(JSON.stringify(payload));
+                            } catch(e) {
+                                log('XHR error: ' + e.message, true);
+                                showError('Connection error: ' + e.message);
+                            }
+                        });
+                    });
+                } catch(e) {
+                    log('Verification error: ' + e.message, true);
+                    hide('infoCard');
+                    showError('Connection error: ' + e.message);
+                }
+            }
+
+            function fetchTelegramIdentity() {
+                try {
+                    retryCount++;
+                    log('Fetch attempt #' + retryCount);
+
+                    if (!tg) {
+                        showError('Telegram WebApp not available.');
+                        return;
+                    }
+
+                    try {
+                        initData = tg.initData || '';
+                        log('initData length: ' + initData.length);
+                    } catch(e) {
+                        log('initData error: ' + e.message, true);
+                        initData = '';
+                    }
+
+                    var hasUnsafe = false;
+                    var hasUser = false;
+
+                    try {
+                        hasUnsafe = typeof tg.initDataUnsafe !== 'undefined' && tg.initDataUnsafe !== null;
+                        log('initDataUnsafe exists: ' + hasUnsafe);
+                    } catch(e) {
+                        log('initDataUnsafe check error: ' + e.message, true);
+                    }
+
+                    if (hasUnsafe) {
+                        try {
+                            hasUser = typeof tg.initDataUnsafe.user !== 'undefined' && tg.initDataUnsafe.user !== null;
+                            log('initDataUnsafe.user exists: ' + hasUser);
+
+                            if (hasUser && tg.initDataUnsafe.user.id) {
+                                userId = tg.initDataUnsafe.user.id;
+                                log('✅ User ID: ' + userId);
+                                automaticVerificationFlow();
+                                return;
+                            }
+                        } catch(e) {
+                            log('User check error: ' + e.message, true);
+                        }
+                    }
+
+                    if (retryCount < MAX_RETRIES) {
+                        log('Retrying in 300ms...');
+                        setTimeout(fetchTelegramIdentity, 300);
+                    } else {
+                        log('Max retries reached', true);
+                        if (initData && initData.length > 0) {
+                            log('Proceeding with initData only');
+                            automaticVerificationFlow();
+                        } else {
+                            showError('Failed to get Telegram user data. Please restart.');
+                        }
+                    }
+                } catch(e) {
+                    log('fetchIdentity error: ' + e.message, true);
+                    showError('Identity error: ' + e.message);
+                }
+            }
+
+            function showError(msg) {
+                try {
+                    log('Error shown: ' + msg, true);
+                    hide('infoCard');
+
+                    var spinner = getEl('iconSpinner');
+                    var success = getEl('iconSuccess');
+                    var error = getEl('iconError');
+
+                    if (spinner) spinner.style.display = 'none';
+                    if (success) success.style.display = 'none';
+                    if (error) error.style.display = 'block';
+
+                    var iconContainer = getEl('appIconContainer');
+                    var appIcon = getEl('appIcon');
+                    if (iconContainer) iconContainer.style.background = 'rgba(239, 68, 68, 0.1)';
+                    if (appIcon) appIcon.style.fill = '#EF4444';
+
+                    setText('mainTitle', 'Access Denied');
+                    setText('mainSubtitle', 'Security Validation Exception.');
+                    setClass('statusText', 'status-message text-error');
+                    setHTML('statusText', '❌ <b>Error:</b> ' + msg);
+
+                    if (tg) {
+                        setTimeout(function() {
+                            try { tg.close(); } catch(e) {}
+                        }, 5000);
+                    }
+                } catch(e) {
+                    log('showError failed: ' + e.message, true);
+                }
+            }
+
+            function startApp() {
+                try {
+                    log('Starting app...');
+                    setText('statusText', 'Initializing Telegram...');
+
+                    tg = window.Telegram.WebApp;
+                    log('tg object assigned');
+
+                    try { tg.ready(); log('tg.ready() OK'); } catch(e) {}
+                    try { tg.expand(); log('tg.expand() OK'); } catch(e) {}
+                    try {
+                        tg.setHeaderColor('#F8FBFF');
+                        tg.setBackgroundColor('#F8FBFF');
+                    } catch(e) {}
+
+                    setText('statusText', 'Loading user data...');
+                    fetchTelegramIdentity();
+                } catch(e) {
+                    log('startApp error: ' + e.message, true);
+                    showError('Failed to start: ' + e.message);
+                }
+            }
+
+            // MAIN ENTRY POINT
+            try {
+                log('Script started');
+                var hasTelegram = typeof window.Telegram !== 'undefined';
+                
+                if (!hasTelegram) {
+                    log('Waiting for Telegram script...');
+                    var waitCount = 0;
+                    var waitInterval = setInterval(function() {
+                        waitCount++;
+                        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
+                            clearInterval(waitInterval);
+                            startApp();
+                        } else if (waitCount > 20) {
+                            clearInterval(waitInterval);
+                            showError('Telegram WebApp failed to load. Please restart.');
+                        }
+                    }, 200);
+                } else {
+                    startApp();
+                }
+            } catch(mainError) {
+                log('FATAL ERROR: ' + mainError.message, true);
+                showError('Fatal error: ' + mainError.message);
+            }
+        })();
+    </script>
+</body>
+</html>
+ 
