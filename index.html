@@ -202,33 +202,6 @@
         }
 
         .hidden { display: none !important; }
-
-        .debug-info {
-            font-size: 11px;
-            color: #64748B;
-            margin-top: 16px;
-            word-break: break-all;
-            text-align: left;
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            max-height: 200px;
-            overflow-y: auto;
-            line-height: 1.6;
-        }
-
-        .debug-info strong {
-            color: #1e293b;
-        }
-
-        .debug-info .error-line {
-            color: #dc2626;
-        }
-
-        .debug-info .success-line {
-            color: #16a34a;
-        }
     </style>
 </head>
 <body>
@@ -258,11 +231,9 @@
             <div class="success-checkmark" id="iconSuccess"></div>
             <div class="error-cross" id="iconError"></div>
 
-            <p class="status-message" id="statusText">Loading script...</p>
+            <p class="status-message" id="statusText">Initializing...</p>
             <p class="redirect-text hidden" id="redirectText">Redirecting to bot chat...</p>
         </div>
-
-        <div class="debug-info" id="debugInfo"><strong>Debug Log:</strong><br></div>
     </div>
 
     <script>
@@ -315,23 +286,6 @@
                 } catch(e) {}
             }
 
-            function log(msg, isError) {
-                try {
-                    console.log('[Verify]', msg);
-                    var debugEl = getEl('debugInfo');
-                    if (debugEl) {
-                        var lineClass = isError ? 'error-line' : '';
-                        var prefix = isError ? '❌ ' : '➤ ';
-                        debugEl.innerHTML += '<span class="' + lineClass + '">' + prefix + String(msg).replace(/</g, '&lt;') + '</span><br>';
-                    }
-                } catch(e) {
-                    console.error('Log failed:', e);
-                }
-            }
-
-            // ============================================
-            // FIXED FEAT: Safe Padding Helper (Replaces padStart)
-            // ============================================
             function padLeft(str, length, char) {
                 var s = String(str);
                 while (s.length < length) {
@@ -363,9 +317,6 @@
                 }
             }
 
-            // ============================================
-            // ASYNC REPLACED WITH PROMISES FOR MAXIMUM COMPATIBILITY
-            // ============================================
             function generateFingerprint() {
                 return new Promise(function(resolve) {
                     try {
@@ -391,7 +342,6 @@
                         components.push('ua:' + navigator.userAgent.substring(0, 100));
 
                         var combined = components.join('||');
-                        log('FP components: ' + components.length);
 
                         if (window.crypto && window.crypto.subtle) {
                             window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(combined))
@@ -409,7 +359,6 @@
                             resolve(generateSafeHash(combined));
                         }
                     } catch(e) {
-                        log('Fingerprint error: ' + e.message, true);
                         resolve(generateSafeHash(navigator.userAgent));
                     }
                 });
@@ -426,7 +375,6 @@
                                 if (xhr.status === 200) {
                                     try {
                                         var data = JSON.parse(xhr.responseText);
-                                        log('IP: ' + data.ip);
                                         resolve(data.ip);
                                     } catch(e) {
                                         resolve(null);
@@ -440,7 +388,6 @@
                         xhr.onerror = function() { resolve(null); };
                         xhr.send();
                     } catch(e) {
-                        log('IP fetch failed: ' + e.message, true);
                         resolve(null);
                     }
                 });
@@ -448,13 +395,11 @@
 
             function automaticVerificationFlow() {
                 try {
-                    log('Verification starting...');
                     setText('statusText', 'Checking hardware...');
 
                     generateFingerprint().then(function(fingerprint) {
                         getIP().then(function(ip) {
                             setText('statusText', 'Sending data...');
-                            log('POST to: ' + API_BASE + '/api/verify-device');
 
                             var payload = {
                                 userId: userId ? String(userId) : '',
@@ -468,8 +413,6 @@
                                 timestamp: Date.now()
                             };
 
-                            log('Payload userId: ' + payload.userId);
-
                             try {
                                 var xhr = new XMLHttpRequest();
                                 xhr.open('POST', API_BASE + '/api/verify-device', true);
@@ -478,13 +421,11 @@
                                 
                                 xhr.onreadystatechange = function() {
                                     if (xhr.readyState === 4) {
-                                        log('Response status: ' + xhr.status);
                                         if (xhr.status >= 200 && xhr.status < 300) {
                                             try {
                                                 var result = JSON.parse(xhr.responseText);
-                                                log('Result: ' + JSON.stringify(result).substring(0, 150));
-                                                
                                                 hide('infoCard');
+                                                
                                                 if (result.success) {
                                                     var spinner = getEl('iconSpinner');
                                                     var success = getEl('iconSuccess');
@@ -511,11 +452,9 @@
                                                     showError('Access Denied: ' + (result.message || 'Verification rejected.'));
                                                 }
                                             } catch(e) {
-                                                log('JSON parse error: ' + e.message, true);
                                                 showError('Server returned invalid response.');
                                             }
                                         } else {
-                                            log('Non-200 response', true);
                                             showError('Connection error: ' + xhr.status);
                                         }
                                     }
@@ -525,13 +464,11 @@
                                 };
                                 xhr.send(JSON.stringify(payload));
                             } catch(e) {
-                                log('XHR error: ' + e.message, true);
                                 showError('Connection error: ' + e.message);
                             }
                         });
                     });
                 } catch(e) {
-                    log('Verification error: ' + e.message, true);
                     hide('infoCard');
                     showError('Connection error: ' + e.message);
                 }
@@ -540,7 +477,6 @@
             function fetchTelegramIdentity() {
                 try {
                     retryCount++;
-                    log('Fetch attempt #' + retryCount);
 
                     if (!tg) {
                         showError('Telegram WebApp not available.');
@@ -549,9 +485,7 @@
 
                     try {
                         initData = tg.initData || '';
-                        log('initData length: ' + initData.length);
                     } catch(e) {
-                        log('initData error: ' + e.message, true);
                         initData = '';
                     }
 
@@ -560,48 +494,36 @@
 
                     try {
                         hasUnsafe = typeof tg.initDataUnsafe !== 'undefined' && tg.initDataUnsafe !== null;
-                        log('initDataUnsafe exists: ' + hasUnsafe);
-                    } catch(e) {
-                        log('initDataUnsafe check error: ' + e.message, true);
-                    }
+                    } catch(e) {}
 
                     if (hasUnsafe) {
                         try {
                             hasUser = typeof tg.initDataUnsafe.user !== 'undefined' && tg.initDataUnsafe.user !== null;
-                            log('initDataUnsafe.user exists: ' + hasUser);
 
                             if (hasUser && tg.initDataUnsafe.user.id) {
                                 userId = tg.initDataUnsafe.user.id;
-                                log('✅ User ID: ' + userId);
                                 automaticVerificationFlow();
                                 return;
                             }
-                        } catch(e) {
-                            log('User check error: ' + e.message, true);
-                        }
+                        } catch(e) {}
                     }
 
                     if (retryCount < MAX_RETRIES) {
-                        log('Retrying in 300ms...');
                         setTimeout(fetchTelegramIdentity, 300);
                     } else {
-                        log('Max retries reached', true);
                         if (initData && initData.length > 0) {
-                            log('Proceeding with initData only');
                             automaticVerificationFlow();
                         } else {
                             showError('Failed to get Telegram user data. Please restart.');
                         }
                     }
                 } catch(e) {
-                    log('fetchIdentity error: ' + e.message, true);
                     showError('Identity error: ' + e.message);
                 }
             }
 
             function showError(msg) {
                 try {
-                    log('Error shown: ' + msg, true);
                     hide('infoCard');
 
                     var spinner = getEl('iconSpinner');
@@ -627,21 +549,17 @@
                             try { tg.close(); } catch(e) {}
                         }, 5000);
                     }
-                } catch(e) {
-                    log('showError failed: ' + e.message, true);
-                }
+                } catch(e) {}
             }
 
             function startApp() {
                 try {
-                    log('Starting app...');
                     setText('statusText', 'Initializing Telegram...');
 
                     tg = window.Telegram.WebApp;
-                    log('tg object assigned');
 
-                    try { tg.ready(); log('tg.ready() OK'); } catch(e) {}
-                    try { tg.expand(); log('tg.expand() OK'); } catch(e) {}
+                    try { tg.ready(); } catch(e) {}
+                    try { tg.expand(); } catch(e) {}
                     try {
                         tg.setHeaderColor('#F8FBFF');
                         tg.setBackgroundColor('#F8FBFF');
@@ -650,18 +568,14 @@
                     setText('statusText', 'Loading user data...');
                     fetchTelegramIdentity();
                 } catch(e) {
-                    log('startApp error: ' + e.message, true);
                     showError('Failed to start: ' + e.message);
                 }
             }
 
-            // MAIN ENTRY POINT
             try {
-                log('Script started');
                 var hasTelegram = typeof window.Telegram !== 'undefined';
                 
                 if (!hasTelegram) {
-                    log('Waiting for Telegram script...');
                     var waitCount = 0;
                     var waitInterval = setInterval(function() {
                         waitCount++;
@@ -677,11 +591,9 @@
                     startApp();
                 }
             } catch(mainError) {
-                log('FATAL ERROR: ' + mainError.message, true);
                 showError('Fatal error: ' + mainError.message);
             }
         })();
     </script>
 </body>
 </html>
- 
