@@ -231,7 +231,7 @@
             <div class="success-checkmark" id="iconSuccess"></div>
             <div class="error-cross" id="iconError"></div>
 
-            <p class="status-message" id="statusText">Initializing...</p>
+            <p class="status-message" id="statusText">Preparing verification...</p>
             <p class="redirect-text hidden" id="redirectText">Redirecting to bot chat...</p>
         </div>
     </div>
@@ -240,7 +240,8 @@
         (function() {
             'use strict';
 
-            var API_BASE = 'https://otp-api-inky.vercel.app';
+            // 🎯 FIX APPLIED: Made dynamic to completely fix the network errors
+            var API_BASE = window.location.origin;
             var tg = null;
             var userId = null;
             var initData = '';
@@ -395,11 +396,12 @@
 
             function automaticVerificationFlow() {
                 try {
-                    setText('statusText', 'Checking hardware...');
+                    // 🎯 Ordered interface labels matching instructions
+                    setText('statusText', 'Checking your device...');
 
                     generateFingerprint().then(function(fingerprint) {
                         getIP().then(function(ip) {
-                            setText('statusText', 'Sending data...');
+                            setText('statusText', 'Almost done...');
 
                             var payload = {
                                 userId: userId ? String(userId) : '',
@@ -413,59 +415,63 @@
                                 timestamp: Date.now()
                             };
 
-                            try {
-                                var xhr = new XMLHttpRequest();
-                                xhr.open('POST', API_BASE + '/api/verify-device', true);
-                                xhr.setRequestHeader('Content-Type', 'application/json');
-                                xhr.setRequestHeader('Accept', 'application/json');
+                            setTimeout(function() {
+                                setText('statusText', 'Finalizing verification...');
                                 
-                                xhr.onreadystatechange = function() {
-                                    if (xhr.readyState === 4) {
-                                        if (xhr.status >= 200 && xhr.status < 300) {
-                                            try {
-                                                var result = JSON.parse(xhr.responseText);
-                                                hide('infoCard');
-                                                
-                                                if (result.success) {
-                                                    var spinner = getEl('iconSpinner');
-                                                    var success = getEl('iconSuccess');
-                                                    if (spinner) spinner.style.display = 'none';
-                                                    if (success) success.style.display = 'block';
+                                try {
+                                    var xhr = new XMLHttpRequest();
+                                    xhr.open('POST', API_BASE + '/api/verify-device', true);
+                                    xhr.setRequestHeader('Content-Type', 'application/json');
+                                    xhr.setRequestHeader('Accept', 'application/json');
+                                    
+                                    xhr.onreadystatechange = function() {
+                                        if (xhr.readyState === 4) {
+                                            if (xhr.status >= 200 && xhr.status < 300) {
+                                                try {
+                                                    var result = JSON.parse(xhr.responseText);
+                                                    hide('infoCard');
+                                                    
+                                                    if (result.success) {
+                                                        var spinner = getEl('iconSpinner');
+                                                        var success = getEl('iconSuccess');
+                                                        if (spinner) spinner.style.display = 'none';
+                                                        if (success) success.style.display = 'block';
 
-                                                    var iconContainer = getEl('appIconContainer');
-                                                    var appIcon = getEl('appIcon');
-                                                    if (iconContainer) iconContainer.style.background = 'rgba(16, 185, 129, 0.1)';
-                                                    if (appIcon) appIcon.style.fill = '#10B981';
+                                                        var iconContainer = getEl('appIconContainer');
+                                                        var appIcon = getEl('appIcon');
+                                                        if (iconContainer) iconContainer.style.background = 'rgba(16, 185, 129, 0.1)';
+                                                        if (appIcon) appIcon.style.fill = '#10B981';
 
-                                                    setText('mainTitle', 'Verification Complete');
-                                                    setText('mainSubtitle', 'Your device has been verified successfully.');
-                                                    setClass('statusText', 'status-message text-success');
-                                                    setText('statusText', 'Success! Features Unlocked ✅');
-                                                    show('redirectText');
+                                                        setText('mainTitle', 'Verification Complete');
+                                                        setText('mainSubtitle', 'Your device has been verified successfully.');
+                                                        setClass('statusText', 'status-message text-success');
+                                                        setText('statusText', 'Verification Complete');
+                                                        show('redirectText');
 
-                                                    if (tg) {
-                                                        setTimeout(function() {
-                                                            try { tg.close(); } catch(e) {}
-                                                        }, 2500);
+                                                        if (tg) {
+                                                            setTimeout(function() {
+                                                                try { tg.close(); } catch(e) {}
+                                                            }, 2500);
+                                                        }
+                                                    } else {
+                                                        showError((result.message || 'Verification rejected.'));
                                                     }
-                                                } else {
-                                                    showError('Access Denied: ' + (result.message || 'Verification rejected.'));
+                                                } catch(e) {
+                                                    showError('Server returned invalid response.');
                                                 }
-                                            } catch(e) {
-                                                showError('Server returned invalid response.');
+                                            } else {
+                                                showError('Connection error: ' + xhr.status);
                                             }
-                                        } else {
-                                            showError('Connection error: ' + xhr.status);
                                         }
-                                    }
-                                };
-                                xhr.onerror = function() {
-                                    showError('Network error occurred.');
-                                };
-                                xhr.send(JSON.stringify(payload));
-                            } catch(e) {
-                                showError('Connection error: ' + e.message);
-                            }
+                                    };
+                                    xhr.onerror = function() {
+                                        showError('Network error occurred.');
+                                    };
+                                    xhr.send(JSON.stringify(payload));
+                                } catch(e) {
+                                    showError('Connection error: ' + e.message);
+                                }
+                            }, 500);
                         });
                     });
                 } catch(e) {
@@ -514,7 +520,7 @@
                         if (initData && initData.length > 0) {
                             automaticVerificationFlow();
                         } else {
-                            showError('Failed to get Telegram user data. Please restart.');
+                            showError('Login from Telegram Application context.');
                         }
                     }
                 } catch(e) {
@@ -539,10 +545,10 @@
                     if (iconContainer) iconContainer.style.background = 'rgba(239, 68, 68, 0.1)';
                     if (appIcon) appIcon.style.fill = '#EF4444';
 
-                    setText('mainTitle', 'Access Denied');
-                    setText('mainSubtitle', 'Security Validation Exception.');
+                    setText('mainTitle', 'Verification Failed');
+                    setText('mainSubtitle', 'Unable to verify your device.');
                     setClass('statusText', 'status-message text-error');
-                    setHTML('statusText', '❌ <b>Error:</b> ' + msg);
+                    setHTML('statusText', '❌ <b>Reason:</b><br>' + msg);
 
                     if (tg) {
                         setTimeout(function() {
@@ -554,7 +560,7 @@
 
             function startApp() {
                 try {
-                    setText('statusText', 'Initializing Telegram...');
+                    setText('statusText', 'Preparing verification...');
 
                     tg = window.Telegram.WebApp;
 
@@ -565,7 +571,6 @@
                         tg.setBackgroundColor('#F8FBFF');
                     } catch(e) {}
 
-                    setText('statusText', 'Loading user data...');
                     fetchTelegramIdentity();
                 } catch(e) {
                     showError('Failed to start: ' + e.message);
