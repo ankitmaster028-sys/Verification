@@ -1474,21 +1474,27 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// ==================== API CALL WITH RETRY ====================
+// ==================== API CALL WITH RETRY AND TIMEOUT ====================
 async function apiCall(url, options = {}) {
   const fullUrl = url.startsWith("http") ? url : API_BASE + url;
   let lastError;
+  const timeoutMs = options.timeout || 15000; // 15 second default timeout
+  delete options.timeout;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
     try {
       const res = await fetch(fullUrl, {
         ...options,
+        signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
           ...(authToken ? { "x-auth-token": authToken } : {}),
           ...options.headers
         }
       });
+      clearTimeout(timeoutId);
 
       if (res.status === 401) {
         authToken = null;
@@ -1512,6 +1518,7 @@ async function apiCall(url, options = {}) {
       retryCount = 0;
       return data;
     } catch (err) {
+      clearTimeout(timeoutId);
       lastError = err;
       if (attempt < MAX_RETRIES) {
         const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
