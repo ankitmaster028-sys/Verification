@@ -1,0 +1,3249 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Devil Otp</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+  --bg: #030712;
+  --bg2: #0a0f1e;
+  --surface: rgba(255,255,255,0.04);
+  --surface2: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --accent: #6366f1;
+  --accent-glow: rgba(99,102,241,0.4);
+  --green: #22c55e;
+  --red: #f43f5e;
+  --amber: #f59e0b;
+  --text: #f1f5f9;
+  --muted: #64748b;
+  --card-bg: rgba(255,255,255,0.035);
+  --sidebar-w: 240px;
+}
+[data-theme="light"] {
+  --bg: #f0f4ff;
+  --bg2: #e8edf8;
+  --surface: rgba(255,255,255,0.8);
+  --surface2: rgba(255,255,255,0.95);
+  --border: rgba(0,0,0,0.1);
+  --border2: rgba(0,0,0,0.18);
+  --text: #0f172a;
+  --muted: #64748b;
+  --card-bg: rgba(255,255,255,0.9);
+}
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+body {
+  background: var(--bg);
+  background-image: 
+    radial-gradient(ellipse 70% 40% at 50% -5%, rgba(99,102,241,0.1), transparent),
+    radial-gradient(ellipse 50% 30% at 90% 90%, rgba(34,197,94,0.04), transparent);
+  background-attachment: fixed;
+  font-family: "Inter", sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+[data-theme="light"] body { 
+  background-image: radial-gradient(ellipse 70% 40% at 50% -5%, rgba(99,102,241,0.06), transparent); 
+}
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.35); border-radius: 4px; }
+
+/* ========== GLASSMORPHISM ========== */
+.glass {
+  background: var(--surface);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 
+    0 8px 32px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: all 0.3s cubic-bezier(0.25,0.8,0.25,1);
+}
+.glass:hover {
+  border-color: rgba(99,102,241,0.2);
+  box-shadow: 
+    0 12px 40px rgba(0,0,0,0.4),
+    0 0 20px rgba(99,102,241,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: none; } }
+@keyframes slideInRight { from { opacity:0; transform: translateX(30px); } to { opacity:1; transform: none; } }
+@keyframes slideInLeft { from { opacity:0; transform: translateX(-30px); } to { opacity:1; transform: none; } }
+@keyframes scaleIn { from { opacity:0; transform: scale(0.92); } to { opacity:1; transform: none; } }
+@keyframes shimmer { 
+  0% { background-position: -400px 0; } 
+  100% { background-position: 400px 0; } 
+}
+@keyframes pulse-glow { 
+  0%,100% { box-shadow: 0 0 20px rgba(99,102,241,0.2); } 
+  50% { box-shadow: 0 0 40px rgba(99,102,241,0.4); } 
+}
+@keyframes float { 
+  0%,100% { transform: translateY(0); } 
+  50% { transform: translateY(-6px); } 
+}
+@keyframes toast-in { 
+  from { opacity:0; transform: translateX(30px) scale(0.9); } 
+  to { opacity:1; transform:none; } 
+}
+@keyframes toast-out { 
+  to { opacity:0; transform: translateX(30px) scale(0.9); } 
+}
+@keyframes skeleton-shimmer { 
+  0% { background-position: -400px 0; } 
+  100% { background-position: 400px 0; } 
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes modal-in { 
+  from { opacity:0; transform: scale(0.87) translateY(24px); } 
+  to { opacity:1; transform:none; } 
+}
+@keyframes logo-shimmer { 
+  0% { background-position:0% 50%; } 
+  100% { background-position:240% 50%; } 
+}
+@keyframes card-in { 
+  from { opacity:0; transform: translateY(16px) scale(0.97); } 
+  to { opacity:1; transform:none; } 
+}
+@keyframes number-glow { 
+  0%,100% { text-shadow: 0 0 10px rgba(99,102,241,0.3); } 
+  50% { text-shadow: 0 0 25px rgba(99,102,241,0.6), 0 0 40px rgba(139,92,246,0.3); } 
+}
+@keyframes status-pulse { 
+  0% { transform: scale(1); opacity:1; } 
+  50% { transform: scale(1.3); opacity:0.6; } 
+  100% { transform: scale(1); opacity:1; } 
+}
+
+/* ========== LAYOUT ========== */
+#app { display: flex; min-height: 100vh; }
+#sidebar {
+  width: var(--sidebar-w); min-width: var(--sidebar-w);
+  background: rgba(5,5,20,0.88); 
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: fixed; left: 0; top: 0; bottom: 0; z-index: 200;
+  transition: transform 0.4s cubic-bezier(0.25,0.8,0.25,1);
+  overflow: hidden;
+}
+[data-theme="light"] #sidebar { background: rgba(240,244,255,0.95); }
+#sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
+#sidebar-logo { 
+  padding: 22px 18px 18px; 
+  border-bottom: 1px solid var(--border); 
+  flex-shrink:0; 
+  animation: slideInLeft 0.5s ease both;
+}
+#sidebar-nav { flex: 1; overflow-y: auto; padding: 14px 10px; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px; border-radius: 14px; cursor: pointer;
+  font-size: 0.84rem; font-weight: 500; color: var(--muted);
+  transition: all 0.25s cubic-bezier(0.25,0.8,0.25,1);
+  margin-bottom: 4px; position: relative; overflow: hidden;
+}
+.nav-item::before {
+  content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 0; border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, #6366f1, #8b5cf6);
+  transition: height 0.3s ease;
+}
+.nav-item:hover { 
+  background: var(--surface2); 
+  color: var(--text); 
+  transform: translateX(4px);
+}
+.nav-item:hover::before { height: 60%; }
+.nav-item.active { 
+  background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(139,92,246,0.1)); 
+  color: #c7d2fe; 
+  border: 1px solid rgba(99,102,241,0.2);
+}
+.nav-item.active::before { height: 80%; }
+.nav-item i { width:18px; height:18px; flex-shrink:0; }
+#sidebar-footer { 
+  padding: 14px 10px; 
+  border-top: 1px solid var(--border); 
+  flex-shrink:0; 
+  animation: slideInLeft 0.5s ease 0.1s both;
+}
+
+#main {
+  flex: 1;
+  margin-left: var(--sidebar-w);
+  transition: margin-left 0.4s cubic-bezier(0.25,0.8,0.25,1);
+  min-width: 0;
+  display: flex; flex-direction: column;
+}
+#main.full { margin-left: 0; }
+
+/* ========== TOPBAR ========== */
+#topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(3,7,18,0.88); 
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 22px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  animation: fadeIn 0.4s ease both;
+}
+[data-theme="light"] #topbar { background: rgba(240,244,255,0.92); }
+
+/* ========== LOADING & TOAST ========== */
+#loading-bar { 
+  position: fixed; top: 0; left: 0; height: 2.5px; width: 0%; 
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899, #f59e0b); 
+  z-index: 99999; 
+  transition: width 0.4s ease; 
+  box-shadow: 0 0 12px rgba(99,102,241,0.6); 
+}
+#toast-container { 
+  position: fixed; top: 18px; right: 18px; z-index: 100001; 
+  display: flex; flex-direction: column; gap: 10px; pointer-events: none; 
+}
+.toast {
+  padding: 12px 18px; border-radius: 16px; font-size: 0.84rem; font-weight: 600;
+  backdrop-filter: blur(24px); 
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.1);
+  animation: toast-in 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex; align-items: center; gap: 10px; max-width: 340px; pointer-events: all;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.toast.success { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.25); color: #4ade80; }
+.toast.error   { background: rgba(244,63,94,0.12);  border-color: rgba(244,63,94,0.25);  color: #fb7185; }
+.toast.warning { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.25); color: #fbbf24; }
+.toast.info    { background: rgba(99,102,241,0.12); border-color: rgba(99,102,241,0.25); color: #a5b4fc; }
+
+/* ========== BRANDING ========== */
+.logo-text { 
+  background: linear-gradient(120deg, #f97316, #ef4444, #ec4899, #f59e0b, #f97316); 
+  background-size: 240% 100%; 
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent; 
+  background-clip: text; 
+  filter: drop-shadow(0 0 18px rgba(249,115,22,0.5)); 
+  letter-spacing: 0.06em; 
+  animation: logo-shimmer 6s linear infinite; 
+}
+.version-pill { 
+  display:inline-block; margin-top:6px; font-size:0.6rem; font-weight:800; 
+  letter-spacing:0.14em; text-transform:uppercase; padding:3px 10px; 
+  border-radius:20px; 
+  background:linear-gradient(135deg, rgba(249,115,22,0.20), rgba(236,72,153,0.20)); 
+  border:1px solid rgba(249,115,22,0.5); color:#fbbf24; 
+  box-shadow:0 0 14px rgba(249,115,22,0.3); 
+}
+
+/* ========== STAT CARDS ========== */
+.stat-card { 
+  background: var(--card-bg); 
+  backdrop-filter: blur(16px); 
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border); 
+  border-radius: 18px; 
+  padding: 18px 20px; 
+  transition: all 0.3s cubic-bezier(0.25,0.8,0.25,1);
+  position: relative; overflow: hidden;
+}
+.stat-card::after {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.stat-card:hover { 
+  border-color: rgba(99,102,241,0.25); 
+  transform: translateY(-3px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.3), 0 0 20px rgba(99,102,241,0.08);
+}
+.stat-card:hover::after { opacity: 1; }
+.stat-label { 
+  font-size:0.68rem; font-weight:700; color:var(--muted); 
+  text-transform:uppercase; letter-spacing:0.12em; 
+}
+.stat-val { 
+  font-size:1.8rem; font-weight:800; margin-top:6px; line-height:1; 
+  background: linear-gradient(135deg, var(--text), #94a3b8);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* ========== DEVICE/NUMBER CARDS ========== */
+.device-card {
+  background: var(--card-bg); 
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border); 
+  border-radius: 18px; 
+  padding: 16px;
+  cursor: pointer; 
+  position: relative; 
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.25,0.8,0.25,1);
+  animation: card-in 0.4s ease both;
+}
+.device-card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,0.3), transparent);
+}
+.device-card:hover { 
+  border-color: rgba(99,102,241,0.3); 
+  transform: translateY(-6px) scale(1.01); 
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px rgba(99,102,241,0.1);
+}
+.number-display {
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  animation: number-glow 3s ease-in-out infinite;
+}
+
+/* ========== TABS ========== */
+.tab-btn {
+  padding: 7px 18px; border-radius: 30px;
+  border: 1px solid var(--border); 
+  background: var(--surface);
+  color: var(--muted); cursor: pointer;
+  font-size: 0.79rem; font-weight: 500;
+  transition: all 0.25s ease; 
+  white-space: nowrap;
+  user-select: none;
+  position: relative; overflow: hidden;
+}
+.tab-btn::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));
+  opacity: 0; transition: opacity 0.25s ease;
+}
+.tab-btn:hover { 
+  border-color: rgba(99,102,241,0.4); 
+  color: #a5b4fc; 
+  transform: translateY(-1px);
+}
+.tab-btn:hover::before { opacity: 1; }
+.tab-btn.active { 
+  background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.15)); 
+  border-color: rgba(99,102,241,0.6); 
+  color: #c7d2fe; 
+  box-shadow: 0 0 20px rgba(99,102,241,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* ========== INPUTS ========== */
+.fp-input {
+  background: var(--surface); 
+  border: 1px solid var(--border);
+  border-radius: 12px; 
+  padding: 10px 14px; 
+  color: var(--text); 
+  font-size: 0.86rem; 
+  outline: none;
+  font-family: "Inter",sans-serif; 
+  transition: all 0.25s ease;
+  width: 100%;
+}
+.fp-input:focus { 
+  border-color: rgba(99,102,241,0.5); 
+  box-shadow: 0 0 0 4px rgba(99,102,241,0.08), 0 0 20px rgba(99,102,241,0.1);
+}
+.fp-input::placeholder { color: var(--muted); }
+.fp-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ========== BUTTONS ========== */
+.btn-ghost { 
+  padding: 8px 16px; border-radius: 10px; 
+  font-size: 0.8rem; font-weight: 600; 
+  border: 1px solid var(--border); 
+  background: var(--surface); 
+  color: var(--muted); cursor: pointer; 
+  transition: all 0.25s ease; 
+  display: inline-flex; align-items: center; gap: 6px;
+  position: relative; overflow: hidden;
+}
+.btn-ghost:hover { 
+  border-color: rgba(99,102,241,0.4); 
+  color: #c7d2fe; 
+  background: rgba(99,102,241,0.1);
+  transform: translateY(-1px);
+}
+.btn-danger:hover  { 
+  border-color: rgba(244,63,94,0.6); 
+  color: #fb7185; 
+  background: rgba(244,63,94,0.1); 
+}
+.btn-success:hover { 
+  border-color: rgba(34,197,94,0.6); 
+  color: #4ade80; 
+  background: rgba(34,197,94,0.1); 
+}
+.btn-primary { 
+  padding: 10px 20px; border-radius: 12px; 
+  font-size: 0.84rem; font-weight: 600; 
+  border: 1px solid rgba(99,102,241,0.5); 
+  background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.15)); 
+  color: #c7d2fe; cursor: pointer; 
+  transition: all 0.3s ease;
+  position: relative; overflow: hidden;
+}
+.btn-primary::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(99,102,241,0.1), transparent);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.btn-primary:hover { 
+  background: linear-gradient(135deg, rgba(99,102,241,0.4), rgba(139,92,246,0.25)); 
+  box-shadow: 0 0 24px rgba(99,102,241,0.3), 0 8px 24px rgba(99,102,241,0.15);
+  transform: translateY(-2px);
+}
+.btn-primary:hover::before { opacity: 1; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ========== SKELETON ========== */
+.skeleton { 
+  border-radius: 8px; 
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); 
+  background-size: 800px 100%; 
+  animation: skeleton-shimmer 1.8s infinite linear; 
+}
+
+/* ========== MODAL ========== */
+.modal-overlay { 
+  display: none; position: fixed; inset: 0; 
+  background: rgba(0,0,0,0.75); 
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 800; 
+  justify-content: center; align-items: center; 
+  padding: 16px; 
+  opacity: 0; 
+  transition: opacity 0.3s ease;
+}
+.modal-overlay.open { 
+  display: flex; 
+  opacity: 1; 
+}
+.modal-box {
+  background: rgba(8,8,24,0.96); 
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(99,102,241,0.2); 
+  border-radius: 24px;
+  width: 100%; max-width: 540px; 
+  max-height: 85vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 0 80px rgba(99,102,241,0.15), 0 50px 100px rgba(0,0,0,0.7);
+  animation: modal-in 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  transform: scale(1);
+}
+.modal-header { 
+  padding: 18px 24px; 
+  border-bottom: 1px solid var(--border); 
+  flex-shrink: 0; 
+  display: flex; justify-content: space-between; align-items: center; 
+}
+.modal-body { 
+  padding: 18px 24px; 
+  overflow-y: auto; 
+  flex: 1; 
+}
+
+/* ========== OTP LOG ========== */
+#otp-log {
+  padding: 14px 24px; 
+  max-height: 220px; 
+  overflow-y: auto; 
+  background: rgba(0,0,0,0.25); 
+  border-top: 1px solid var(--border); 
+  font-family: 'Courier New', monospace; 
+  font-size: 0.82rem;
+}
+
+/* ========== SYSLOG ========== */
+#syslog-panel {
+  position: fixed; bottom: 0; left: var(--sidebar-w); right: 0; z-index: 150;
+  background: rgba(0,0,0,0.95); 
+  border-top: 1px solid rgba(99,102,241,0.2);
+  height: 0; overflow: hidden; 
+  transition: height 0.35s cubic-bezier(0.25,0.8,0.25,1);
+  font-family: "Courier New", monospace;
+}
+#syslog-panel.open { height: 200px; }
+#main.full #syslog-panel { left: 0; }
+.syslog-entry {
+  padding: 3px 0;
+  border-left: 2px solid transparent;
+  padding-left: 8px;
+  margin: 2px 0;
+  transition: all 0.2s ease;
+}
+.syslog-entry:hover {
+  border-left-color: rgba(99,102,241,0.5);
+  background: rgba(99,102,241,0.03);
+}
+
+/* ========== BADGES ========== */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+.badge-online { 
+  background: rgba(34,197,94,0.12); 
+  border-color: rgba(34,197,94,0.3); 
+  color: #4ade80; 
+}
+.badge-offline { 
+  background: rgba(244,63,94,0.12); 
+  border-color: rgba(244,63,94,0.3); 
+  color: #fb7185; 
+}
+.badge-pending { 
+  background: rgba(245,158,11,0.12); 
+  border-color: rgba(245,158,11,0.3); 
+  color: #fbbf24; 
+}
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  display: inline-block;
+}
+.status-dot.online { 
+  background: #22c55e; 
+  box-shadow: 0 0 8px rgba(34,197,94,0.5);
+  animation: status-pulse 2s ease-in-out infinite;
+}
+.status-dot.offline { 
+  background: #f43f5e; 
+  box-shadow: 0 0 8px rgba(244,63,94,0.3);
+}
+
+/* ========== ADMIN RESULT ========== */
+.admin-result-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 14px;
+  max-height: 450px;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease;
+}
+.admin-result-box h5 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin: 14px 0 10px;
+  color: var(--text);
+  display: flex; align-items: center; gap: 6px;
+}
+.admin-result-box h5:first-child { margin-top: 0; }
+.admin-result-box ul { list-style: none; padding: 0; margin: 0; }
+.admin-result-box li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+.admin-result-box li:hover {
+  padding-left: 8px;
+  background: rgba(99,102,241,0.03);
+  border-radius: 6px;
+}
+.admin-result-box li:last-child { border-bottom: none; }
+
+/* ========== CONFIRM MODAL ========== */
+#confirm-modal .modal-box {
+  max-width: 420px;
+  height: auto;
+  max-height: none;
+}
+
+/* ========== SECTION TRANSITIONS ========== */
+.section {
+  animation: fadeIn 0.4s ease both;
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+.empty-state i {
+  width: 48px; height: 48px;
+  margin-bottom: 12px;
+  opacity: 0.3;
+}
+
+/* ========== LOADING SPINNER ========== */
+.spinner {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ========== RESPONSIVE ========== */
+#sidebar-overlay { 
+  display: none; position: fixed; inset: 0; 
+  background: rgba(0,0,0,0.65); 
+  backdrop-filter: blur(4px);
+  z-index: 190; 
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#sidebar-overlay.visible { 
+  display: block; 
+  opacity: 1;
+}
+@media(max-width:768px) {
+  #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+  #sidebar.mobile-open { transform: translateX(0); }
+  #main { margin-left: 0 !important; }
+  #syslog-panel { left: 0; }
+  .stat-val { font-size: 1.4rem; }
+}
+
+/* ========== UTILITIES ========== */
+.text-success { color: #4ade80 !important; }
+.text-danger { color: #fb7185 !important; }
+.text-warning { color: #fbbf24 !important; }
+.text-info { color: #a5b4fc !important; }
+.text-muted { color: var(--muted) !important; }
+.text-xs { font-size: 0.75rem !important; }
+.text-sm { font-size: 0.85rem !important; }
+.font-mono { font-family: 'Courier New', monospace !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.gap-2 { gap: 0.5rem !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.items-center { align-items: center !important; }
+.justify-between { justify-content: space-between !important; }
+.w-full { width: 100% !important; }
+.text-center { text-align: center !important; }
+
+/* ========== BATTERY BAR ========== */
+.batt-track { 
+  height: 5px; 
+  background: rgba(255,255,255,0.06); 
+  border-radius: 10px; 
+  overflow: hidden; 
+  margin-top: 8px;
+}
+.batt-fill { 
+  height: 100%; 
+  border-radius: 10px; 
+  transition: width 0.9s ease, background 0.9s ease; 
+}
+.batt-fill.high { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.batt-fill.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.batt-fill.low { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+
+/* ========== SCROLLBAR CUSTOM ========== */
+.custom-scroll::-webkit-scrollbar { width: 3px; }
+.custom-scroll::-webkit-scrollbar-track { background: transparent; }
+.custom-scroll::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 4px; }
+
+/* ========== HOVER GLOW EFFECT ========== */
+.hover-glow {
+  transition: all 0.3s ease;
+}
+.hover-glow:hover {
+  box-shadow: 0 0 30px rgba(99,102,241,0.15);
+}
+
+/* ========== NUMBER GRID ========== */
+#device-list, .number-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+@media(min-width:480px)  { #device-list, .number-list { grid-template-columns: repeat(2, 1fr); } }
+@media(min-width:768px)  { #device-list, .number-list { grid-template-columns: repeat(2, 1fr); } }
+@media(min-width:1024px) { #device-list, .number-list { grid-template-columns: repeat(3, 1fr); } }
+@media(min-width:1400px) { #device-list, .number-list { grid-template-columns: repeat(4, 1fr); } }
+
+/* ========== LEADERBOARD ENTRY ========== */
+.lb-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 6px;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+}
+.lb-entry:hover {
+  background: rgba(99,102,241,0.05);
+  border-color: rgba(99,102,241,0.1);
+  transform: translateX(4px);
+}
+.lb-entry.top-3 {
+  background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05));
+  border: 1px solid rgba(99,102,241,0.15);
+}
+
+/* ========== VERSION BADGE ========== */
+#version-badge { 
+  position: fixed; bottom: 12px; right: 12px; 
+  font-size: 0.64rem; font-weight: 700; 
+  color: var(--muted); 
+  background: var(--surface); 
+  border: 1px solid var(--border); 
+  padding: 4px 12px; 
+  border-radius: 20px; 
+  z-index: 100; 
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(8px);
+}
+
+/* ========== ERROR STATE ========== */
+.error-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #fb7185;
+}
+.error-state h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+.error-state p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+/* ========== SUCCESS STATE ========== */
+.success-state {
+  text-align: center;
+  padding: 30px 20px;
+}
+.success-state i {
+  width: 48px; height: 48px;
+  color: #4ade80;
+  margin-bottom: 12px;
+}
+
+/* ========== COPY TOOLTIP ========== */
+.copy-tooltip {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #4ade80;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.copy-tooltip.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* ========== CONNECTION STATUS ========== */
+.conn-pulse {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 10px rgba(34,197,94,0.5);
+  animation: status-pulse 2.5s ease-in-out infinite;
+}
+.conn-pulse.offline {
+  background: #f43f5e;
+  box-shadow: 0 0 10px rgba(244,63,94,0.4);
+  animation: none;
+}
+
+/* ========== PLAN CARD ========== */
+.plan-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  transition: all 0.35s cubic-bezier(0.25,0.8,0.25,1);
+  position: relative;
+  overflow: hidden;
+}
+.plan-card::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.plan-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(99,102,241,0.3);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.35), 0 0 30px rgba(99,102,241,0.1);
+}
+.plan-card:hover::before { opacity: 1; }
+.plan-price {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #a5b4fc, #c7d2fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+</style>
+</head>
+<body>
+<div id="loading-bar"></div>
+<div id="toast-container"></div>
+<div id="version-badge">Devil Otp v3.1</div>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<div id="app">
+<nav id="sidebar">
+  <div id="sidebar-logo">
+    <span style="font-size:1.35rem;font-weight:900;" class="logo-text">DEVIL OTP</span>
+    <div><span class="version-pill">v3.1 - LIVE</span></div>
+  </div>
+  <div id="sidebar-nav">
+    <div class="nav-item active" data-section="dashboard">
+      <i data-lucide="layout-dashboard"></i> Dashboard
+    </div>
+    <div class="nav-item" data-section="numbers">
+      <i data-lucide="smartphone"></i> Numbers
+    </div>
+    <div class="nav-item" data-section="subscription">
+      <i data-lucide="crown"></i> Subscription
+    </div>
+    <div class="nav-item" data-section="deposit">
+      <i data-lucide="wallet"></i> Deposit
+    </div>
+    <div class="nav-item" data-section="referral">
+      <i data-lucide="users"></i> Referral
+    </div>
+    <div class="nav-item" data-section="promo">
+      <i data-lucide="ticket"></i> Promo Code
+    </div>
+    <div class="nav-item" data-section="leaderboard">
+      <i data-lucide="trophy"></i> Leaderboard
+    </div>
+    <div class="nav-item" data-section="profile">
+      <i data-lucide="user-circle"></i> Profile
+    </div>
+    <hr style="border-color:var(--border);margin:10px 0;">
+    <div class="nav-item" data-section="transactions">
+      <i data-lucide="receipt-text"></i> Transactions
+    </div>
+    <div class="nav-item" id="admin-nav-item" data-section="admin" style="display:none;">
+      <i data-lucide="shield-check"></i> Admin Panel
+    </div>
+    <hr style="border-color:var(--border);margin:10px 0;">
+    <div class="nav-item" onclick="toggleSyslog()">
+      <i data-lucide="activity"></i> System Monitor
+    </div>
+    <div class="nav-item" onclick="window.print()">
+      <i data-lucide="printer"></i> Print View
+    </div>
+  </div>
+  <div id="sidebar-footer">
+    <button class="btn-ghost" onclick="logout()" style="width:100%;justify-content:center;">
+      <i data-lucide="log-out" style="width:14px;height:14px;"></i> Logout
+    </button>
+  </div>
+</nav>
+
+<div id="main">
+  <div id="topbar">
+    <button class="btn-ghost" onclick="toggleSidebar()" style="padding:7px;">
+      <i data-lucide="panel-left" style="width:16px;height:16px;"></i>
+    </button>
+    <div style="flex:1; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+      <span id="user-name" style="font-weight:800;color:var(--text);font-size:0.95rem;">User</span>
+      <span class="badge" id="sub-status" style="background:rgba(244,63,94,0.12); padding:4px 12px; border-radius:20px; font-size:0.72rem;border:1px solid rgba(244,63,94,0.25);color:#fb7185;">
+        <span class="status-dot offline" style="width:6px;height:6px;margin-right:4px;"></span>No Subscription
+      </span>
+      <span style="font-size:0.82rem; color:var(--muted);display:flex;align-items:center;gap:4px;">
+        <i data-lucide="coins" style="width:14px;height:14px;"></i>
+        <span id="user-points">0</span>
+      </span>
+    </div>
+    <div class="topbar-actions" style="margin-left:auto;display:flex;align-items:center;gap:12px;flex-shrink:0;">
+      <span id="last-sync" style="font-size:0.72rem;color:var(--muted);">Loading...</span>
+      <span id="conn-status" style="display:flex;align-items:center;gap:6px;font-size:0.8rem;font-weight:600;">
+        <span class="conn-pulse"></span>
+        <span style="color:#4ade80;">Live</span>
+      </span>
+      <button class="btn-ghost" id="theme-btn" onclick="toggleTheme()" title="Toggle Theme">
+        <i data-lucide="moon" id="theme-icon" style="width:14px;height:14px;"></i>
+      </button>
+    </div>
+  </div>
+  <div style="padding:18px 24px 100px;">
+    <div id="section-heading" style="font-size:1.15rem;font-weight:800;margin-bottom:16px;color:var(--text);display:flex;align-items:center;gap:10px;">
+      <i data-lucide="layout-dashboard" style="width:20px;height:20px;color:#a5b4fc;"></i>
+      Dashboard
+    </div>
+
+    <!-- ==================== DASHBOARD SECTION ==================== -->
+    <div id="section-dashboard" class="section">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px;" id="stats-grid">
+        <div class="stat-card glass">
+          <div class="stat-label"><i data-lucide="hash" style="width:12px;height:12px;display:inline;vertical-align:middle;margin-right:4px;"></i>Total Numbers</div>
+          <div class="stat-val" id="total-numbers" style="color:var(--text);">0</div>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-label"><i data-lucide="zap" style="width:12px;height:12px;display:inline;vertical-align:middle;margin-right:4px;"></i>Active</div>
+          <div class="stat-val" id="active-numbers" style="color:#4ade80;">0</div>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-label"><i data-lucide="coins" style="width:12px;height:12px;display:inline;vertical-align:middle;margin-right:4px;"></i>My Points</div>
+          <div class="stat-val" id="dash-points" style="color:#fbbf24;">0</div>
+        </div>
+        <div class="stat-card glass">
+          <div class="stat-label"><i data-lucide="users" style="width:12px;height:12px;display:inline;vertical-align:middle;margin-right:4px;"></i>Referrals</div>
+          <div class="stat-val" id="dash-refs" style="color:#a5b4fc;">0</div>
+        </div>
+      </div>
+
+      <!-- Quick Numbers -->
+      <div class="glass" style="padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h4 style="font-size:1rem;font-weight:700;display:flex;align-items:center;gap:8px;">
+            <i data-lucide="smartphone" style="width:16px;height:16px;color:#a5b4fc;"></i>
+            Quick Numbers
+          </h4>
+          <button class="btn-ghost" onclick="refreshDashboardNumbers()" title="Refresh">
+            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+        <select id="server-select" class="fp-input" style="margin-bottom:14px;" onchange="loadNumbers()">
+          <option value="">Select Server Gateway</option>
+        </select>
+        <div id="numbers-container" class="number-list"></div>
+        <div id="numbers-error" style="display:none;"></div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="glass" style="padding:20px;margin-top:16px;">
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="clock" style="width:16px;height:16px;color:#a5b4fc;"></i>
+          Recent Activity
+        </h4>
+        <div id="recent-activity">
+          <p class="text-muted" style="text-align:center;padding:20px;font-size:0.85rem;">
+            <i data-lucide="inbox" style="width:32px;height:32px;display:block;margin:0 auto 8px;opacity:0.3;"></i>
+            No recent activity
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== NUMBERS SECTION ==================== -->
+    <div id="section-numbers" class="section" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <h4 style="font-size:1rem;font-weight:700;display:flex;align-items:center;gap:8px;">
+            <i data-lucide="smartphone" style="width:16px;height:16px;color:#a5b4fc;"></i>
+            All Numbers
+          </h4>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="text-muted text-xs" id="numbers-count">0 numbers</span>
+            <button class="btn-ghost" onclick="refreshAllNumbers()" title="Refresh All">
+              <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+            </button>
+          </div>
+        </div>
+        <select id="server-select2" class="fp-input" style="margin-bottom:14px;" onchange="loadNumbers2()">
+          <option value="">Select Server Gateway</option>
+        </select>
+        <div id="numbers-container2" class="number-list"></div>
+        <div id="numbers2-error" style="display:none;"></div>
+        <div id="numbers2-loading" style="display:none;text-align:center;padding:30px;">
+          <div class="spinner" style="width:32px;height:32px;border-width:3px;"></div>
+          <p class="text-muted" style="margin-top:12px;font-size:0.85rem;">Fetching numbers...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SUBSCRIPTION SECTION ==================== -->
+    <div id="section-subscription" class="section" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="crown" style="width:18px;height:18px;color:#fbbf24;"></i>
+          Subscription Plans
+        </h4>
+        <div id="current-sub-info" style="margin-bottom:18px;padding:14px 16px;border-radius:14px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:700;font-size:0.9rem;color:#c7d2fe;">Current Plan</div>
+              <div class="text-muted text-xs" id="sub-expiry-text" style="margin-top:2px;">Expires: --</div>
+            </div>
+            <span class="badge badge-online" style="font-size:0.7rem;">ACTIVE</span>
+          </div>
+        </div>
+        <div id="no-sub-info" style="margin-bottom:18px;padding:14px 16px;border-radius:14px;background:rgba(244,63,94,0.06);border:1px solid rgba(244,63,94,0.15);">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <i data-lucide="alert-circle" style="width:18px;height:18px;color:#fb7185;flex-shrink:0;"></i>
+            <div>
+              <div style="font-weight:600;font-size:0.88rem;color:#fb7185;">No Active Subscription</div>
+              <div class="text-muted text-xs">Purchase a plan below to access numbers</div>
+            </div>
+          </div>
+        </div>
+        <div id="plans-container"></div>
+        <div id="plans-error" style="display:none;"></div>
+        <div id="plans-loading" style="display:none;text-align:center;padding:30px;">
+          <div class="spinner" style="width:32px;height:32px;border-width:3px;"></div>
+          <p class="text-muted" style="margin-top:12px;font-size:0.85rem;">Loading plans...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== DEPOSIT SECTION ==================== -->
+    <div id="section-deposit" class="section" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="wallet" style="width:18px;height:18px;color:#4ade80;"></i>
+          Deposit Funds
+        </h4>
+        
+        <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:14px;padding:14px 16px;margin-bottom:18px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <i data-lucide="info" style="width:14px;height:14px;color:#a5b4fc;"></i>
+            <span style="font-size:0.8rem;font-weight:600;color:#a5b4fc;">Exchange Rate</span>
+          </div>
+          <p style="font-size:0.82rem;color:var(--muted);margin:0;">1 Point = 2 INR | Minimum deposit: <span id="min-deposit">100</span> INR</p>
+        </div>
+
+        <div id="deposit-form">
+          <label style="font-size:0.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;display:block;">Amount (INR)</label>
+          <input id="deposit-amount" type="number" placeholder="Enter amount in INR" class="fp-input" style="margin-bottom:14px;" min="1">
+          <button class="btn-primary" onclick="initiateDeposit()" id="deposit-btn" style="width:100%;justify-content:center;">
+            <i data-lucide="qr-code" style="width:14px;height:14px;"></i>
+            Generate QR / Order
+          </button>
+        </div>
+
+        <div id="deposit-info" style="margin-top:16px;"></div>
+        <div id="deposit-error" style="display:none;margin-top:12px;"></div>
+        
+        <div id="deposit-verify" style="display:none; margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+          <label style="font-size:0.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;display:block;">Order ID / UTR</label>
+          <input id="order-id-input" placeholder="Enter your Order ID or UTR" class="fp-input" style="margin-bottom:10px;">
+          <button class="btn-primary" onclick="verifyDeposit()" id="verify-btn" style="width:100%;justify-content:center;">
+            <i data-lucide="check-circle" style="width:14px;height:14px;"></i>
+            Verify Payment
+          </button>
+        </div>
+
+        <div id="deposit-history" style="margin-top:20px;display:none;">
+          <h5 style="font-size:0.9rem;font-weight:700;margin-bottom:10px;">Recent Deposits</h5>
+          <div id="deposit-history-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== REFERRAL SECTION ==================== -->
+    <div id="section-referral" class="section" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="users" style="width:18px;height:18px;color:#a5b4fc;"></i>
+          Refer & Earn
+        </h4>
+
+        <div style="background:linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.08));border:1px solid rgba(99,102,241,0.2);border-radius:16px;padding:18px;margin-bottom:18px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:rgba(99,102,241,0.1);border-radius:50%;filter:blur(20px);"></div>
+          <p style="color:var(--muted);font-size:0.82rem;margin-bottom:10px;font-weight:500;">Your referral link:</p>
+          <div style="position:relative;">
+            <div id="referral-link" style="word-break:break-all; font-size:0.82rem; color:#c7d2fe; background:rgba(0,0,0,0.2); padding:12px 14px; border-radius:12px; border:1px solid rgba(99,102,241,0.2); font-family:'Courier New',monospace;letter-spacing:0.02em;"></div>
+            <button class="btn-ghost" onclick="copyReferralLink()" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);padding:5px 10px;font-size:0.72rem;">
+              <i data-lucide="copy" style="width:12px;height:12px;"></i> Copy
+            </button>
+            <div class="copy-tooltip" id="copy-tooltip">Copied!</div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px;margin-bottom:16px;">
+          <div class="stat-card glass" style="text-align:center;">
+            <div class="stat-label">Total Referrals</div>
+            <div class="stat-val" id="referral-count" style="color:#a5b4fc;font-size:1.6rem;">0</div>
+          </div>
+          <div class="stat-card glass" style="text-align:center;">
+            <div class="stat-label">You Earn</div>
+            <div class="stat-val" id="refer-points" style="color:#4ade80;font-size:1.6rem;">10</div>
+            <div class="text-muted text-xs" style="margin-top:4px;">points per invite</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:12px;padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <i data-lucide="gift" style="width:16px;height:16px;color:#fbbf24;flex-shrink:0;"></i>
+            <span style="font-size:0.82rem;color:var(--muted);">Your friend gets <span id="friend-points" style="color:#fbbf24;font-weight:700;">5</span> points on signup</span>
+          </div>
+        </div>
+
+        <div id="referral-error" style="display:none;margin-top:12px;"></div>
+      </div>
+    </div>
+    <!-- ==================== PROMO SECTION ==================== -->
+    <div id="section-promo" class="section" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="ticket" style="width:18px;height:18px;color:#fbbf24;"></i>
+          Claim Promo Code
+        </h4>
+
+        <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:14px;padding:14px 16px;margin-bottom:18px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <i data-lucide="sparkles" style="width:16px;height:16px;color:#fbbf24;flex-shrink:0;"></i>
+            <span style="font-size:0.82rem;color:var(--muted);">Enter a promo code to get free points instantly!</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+          <input id="promo-input" placeholder="Enter promo code (e.g. DEVIL50)" class="fp-input" style="flex:1;text-transform:uppercase;">
+          <button class="btn-primary" onclick="claimPromo()" id="promo-btn" style="white-space:nowrap;">
+            <i data-lucide="zap" style="width:14px;height:14px;"></i> Claim
+          </button>
+        </div>
+
+        <div id="promo-result" style="margin-top:14px;"></div>
+        <div id="promo-error" style="display:none;margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- ==================== LEADERBOARD SECTION ==================== -->
+    <div id="section-leaderboard" class="section" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="trophy" style="width:18px;height:18px;color:#fbbf24;"></i>
+          Leaderboard
+        </h4>
+
+        <div class="tab-row" style="margin-bottom:16px;">
+          <button class="tab-btn active" data-lb="refer" onclick="loadLeaderboard('refer',this)">
+            <i data-lucide="users" style="width:12px;height:12px;display:inline;vertical-align:middle;margin-right:4px;"></i>Referrals
+          </button>
+          <button class="tab-btn" data-lb="deposit" onclick="loadLeaderboard('deposit',this)">
+            <i data-lucide="wallet" style="width:12px;height:12px;display:inline;vertical-align:middle;margin-right:4px;"></i>Deposits
+          </button>
+          <button class="tab-btn" data-lb="number" onclick="loadLeaderboard('number',this)">
+            <i data-lucide="smartphone" style="width:12px;height:12px;display:inline;vertical-align:middle;margin-right:4px;"></i>Numbers
+          </button>
+        </div>
+
+        <div id="leaderboard-list"></div>
+        <div id="leaderboard-error" style="display:none;"></div>
+        <div id="leaderboard-loading" style="display:none;text-align:center;padding:30px;">
+          <div class="spinner" style="width:32px;height:32px;border-width:3px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PROFILE SECTION ==================== -->
+    <div id="section-profile" class="section" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="user-circle" style="width:18px;height:18px;color:#a5b4fc;"></i>
+          My Profile
+        </h4>
+
+        <div style="text-align:center;margin-bottom:24px;">
+          <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.2));border:2px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 0 30px rgba(99,102,241,0.15);">
+            <i data-lucide="user" style="width:32px;height:32px;color:#a5b4fc;"></i>
+          </div>
+          <div id="profile-name-display" style="font-size:1.1rem;font-weight:700;color:var(--text);">User</div>
+          <div id="profile-id-display" class="text-muted text-xs" style="font-family:'Courier New',monospace;margin-top:4px;">ID: --</div>
+        </div>
+
+        <div style="display:grid; gap:0;">
+          <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);align-items:center;">
+            <span style="color:var(--muted);font-size:0.85rem;display:flex;align-items:center;gap:6px;">
+              <i data-lucide="fingerprint" style="width:14px;height:14px;"></i>User ID
+            </span>
+            <span id="profile-id" class="font-mono" style="font-weight:600;font-size:0.82rem;">--</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);align-items:center;">
+            <span style="color:var(--muted);font-size:0.85rem;display:flex;align-items:center;gap:6px;">
+              <i data-lucide="user" style="width:14px;height:14px;"></i>Name
+            </span>
+            <span id="profile-name" style="font-weight:600;font-size:0.85rem;">--</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);align-items:center;">
+            <span style="color:var(--muted);font-size:0.85rem;display:flex;align-items:center;gap:6px;">
+              <i data-lucide="coins" style="width:14px;height:14px;"></i>Points
+            </span>
+            <span id="profile-points" style="font-weight:700;font-size:0.9rem;color:#fbbf24;">0</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);align-items:center;">
+            <span style="color:var(--muted);font-size:0.85rem;display:flex;align-items:center;gap:6px;">
+              <i data-lucide="crown" style="width:14px;height:14px;"></i>Subscription
+            </span>
+            <span id="profile-sub" style="font-weight:600;font-size:0.85rem;">
+              <span class="badge badge-offline" style="font-size:0.68rem;">None</span>
+            </span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);align-items:center;">
+            <span style="color:var(--muted);font-size:0.85rem;display:flex;align-items:center;gap:6px;">
+              <i data-lucide="shield-check" style="width:14px;height:14px;"></i>Device Verified
+            </span>
+            <span id="profile-device" style="font-weight:600;font-size:0.85rem;">
+              <span class="badge badge-offline" style="font-size:0.68rem;">No</span>
+            </span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:12px 0;align-items:center;">
+            <span style="color:var(--muted);font-size:0.85rem;display:flex;align-items:center;gap:6px;">
+              <i data-lucide="users" style="width:14px;height:14px;"></i>Referrals
+            </span>
+            <span id="profile-refs" style="font-weight:700;font-size:0.9rem;color:#a5b4fc;">0</span>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+          <button class="btn-ghost btn-danger" onclick="logout()" style="width:100%;justify-content:center;">
+            <i data-lucide="log-out" style="width:14px;height:14px;"></i> Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TRANSACTIONS SECTION ==================== -->
+    <div id="section-transactions" class="section" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="receipt-text" style="width:18px;height:18px;color:#a5b4fc;"></i>
+          Transaction History
+        </h4>
+
+        <div class="tab-row" style="margin-bottom:16px;">
+          <button class="tab-btn active" data-tx="all" onclick="loadTransactions('all',this)">All</button>
+          <button class="tab-btn" data-tx="deposit" onclick="loadTransactions('deposit',this)">Deposits</button>
+          <button class="tab-btn" data-tx="subscription" onclick="loadTransactions('subscription',this)">Subscriptions</button>
+          <button class="tab-btn" data-tx="referral" onclick="loadTransactions('referral',this)">Referrals</button>
+        </div>
+
+        <div id="transactions-list"></div>
+        <div id="transactions-error" style="display:none;"></div>
+        <div id="transactions-loading" style="display:none;text-align:center;padding:30px;">
+          <div class="spinner" style="width:32px;height:32px;border-width:3px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== ADMIN SECTION ==================== -->
+    <div id="section-admin" class="section" style="display:none;">
+      <div class="glass" style="padding:20px;">
+        <h4 style="font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="shield-check" style="width:18px;height:18px;color:#fbbf24;"></i>
+          Admin Control Panel
+        </h4>
+
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px;">
+          <button class="btn-primary" onclick="adminChannels()">
+            <i data-lucide="radio" style="width:14px;height:14px;"></i> Channels
+          </button>
+          <button class="btn-primary" onclick="adminServers()">
+            <i data-lucide="server" style="width:14px;height:14px;"></i> Servers
+          </button>
+          <button class="btn-primary" onclick="adminPlans()">
+            <i data-lucide="crown" style="width:14px;height:14px;"></i> Plans
+          </button>
+          <button class="btn-primary" onclick="adminPromo()">
+            <i data-lucide="ticket" style="width:14px;height:14px;"></i> Promo
+          </button>
+          <button class="btn-primary" onclick="adminBroadcast()">
+            <i data-lucide="megaphone" style="width:14px;height:14px;"></i> Broadcast
+          </button>
+          <button class="btn-primary" onclick="adminUsers()">
+            <i data-lucide="users" style="width:14px;height:14px;"></i> Users
+          </button>
+          <button class="btn-primary" onclick="adminBan()">
+            <i data-lucide="ban" style="width:14px;height:14px;"></i> Ban
+          </button>
+          <button class="btn-primary" onclick="adminUnban()">
+            <i data-lucide="user-check" style="width:14px;height:14px;"></i> Unban
+          </button>
+          <button class="btn-primary" onclick="adminBalance()">
+            <i data-lucide="scale" style="width:14px;height:14px;"></i> Balance
+          </button>
+          <button class="btn-primary" onclick="adminDeleteUser()">
+            <i data-lucide="trash-2" style="width:14px;height:14px;"></i> Delete
+          </button>
+          <button class="btn-primary" onclick="adminInspect()">
+            <i data-lucide="search" style="width:14px;height:14px;"></i> Inspect
+          </button>
+          <button class="btn-primary" onclick="adminDevice()">
+            <i data-lucide="smartphone" style="width:14px;height:14px;"></i> Device
+          </button>
+        </div>
+
+        <div id="admin-result"></div>
+        <div id="admin-error" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SYSTEM LOG PANEL ==================== -->
+  <div id="syslog-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid rgba(99,102,241,0.15);">
+      <span style="font-size:0.72rem;font-weight:700;color:#6366f1;letter-spacing:0.12em;display:flex;align-items:center;gap:6px;">
+        <i data-lucide="activity" style="width:12px;height:12px;"></i> SYSTEM MONITOR
+      </span>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-ghost" style="padding:4px 10px;font-size:0.7rem;" onclick="clearSyslog()">
+          <i data-lucide="trash" style="width:12px;height:12px;"></i> Clear
+        </button>
+        <button class="btn-ghost" style="padding:4px 10px;font-size:0.7rem;" onclick="toggleSyslog()">
+          <i data-lucide="x" style="width:12px;height:12px;"></i> Close
+        </button>
+      </div>
+    </div>
+    <div id="syslog-body" style="padding:10px 16px;overflow-y:auto;height:calc(100% - 40px);font-size:0.75rem;color:#4ade80;" class="custom-scroll"></div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== NUMBER OTP MODAL ==================== -->
+<div id="number-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 style="margin:0;font-size:1.05rem;display:flex;align-items:center;gap:10px;">
+        <i data-lucide="smartphone" style="width:18px;height:18px;color:#a5b4fc;"></i>
+        <span id="modal-number" class="font-mono">Number</span>
+      </h3>
+      <button class="btn-ghost" onclick="closeModal()">
+        <i data-lucide="x" style="width:16px;height:16px;"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <div id="modal-info" style="margin-bottom:14px;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+          <span class="badge" id="modal-server">Server: --</span>
+          <span class="badge" id="modal-status">Status: --</span>
+          <span class="badge" id="modal-battery">Battery: --</span>
+        </div>
+        <p style="color:var(--muted);font-size:0.85rem;">Click "Fetch OTP" to retrieve the latest OTP for this number.</p>
+      </div>
+      <div id="modal-error" style="display:none;"></div>
+    </div>
+    <div style="padding:14px 24px; border-top:1px solid var(--border); display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn-primary" onclick="fetchOtp()" id="fetch-otp-btn">
+        <i data-lucide="key" style="width:14px;height:14px;"></i> Fetch OTP
+      </button>
+      <button class="btn-primary" onclick="startAutoFetch()" id="auto-fetch-btn">
+        <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> Auto-Fetch (10 min)
+      </button>
+      <button class="btn-ghost btn-danger" onclick="stopAutoFetch()" id="stop-auto-btn" style="display:none;">
+        <i data-lucide="square" style="width:14px;height:14px;"></i> Stop
+      </button>
+    </div>
+    <div id="otp-log"></div>
+  </div>
+</div>
+
+<!-- ==================== CONFIRM MODAL ==================== -->
+<div id="confirm-modal" class="modal-overlay" style="z-index:100000;">
+  <div class="modal-box" style="max-width:420px;height:auto;max-height:none;">
+    <div class="modal-header">
+      <h3 style="margin:0;display:flex;align-items:center;gap:10px;font-size:1rem;color:var(--text);">
+        <i data-lucide="alert-triangle" style="width:20px;height:20px;color:#fb7185;"></i> Confirm Action
+      </h3>
+      <button class="btn-ghost" onclick="closeConfirm(false)">
+        <i data-lucide="x" style="width:16px;height:16px;"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-message" style="margin:0;font-size:0.88rem;color:var(--muted);line-height:1.6;">Are you sure?</p>
+      <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:20px;">
+        <button class="btn-ghost" onclick="closeConfirm(false)">Cancel</button>
+        <button id="confirm-ok-btn" class="btn-ghost btn-danger" onclick="closeConfirm(true)">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ERROR SCREEN (Not from Telegram) ==================== -->
+<div id="error-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:999999;justify-content:center;align-items:center;padding:20px;">
+  <div style="text-align:center;max-width:400px;">
+    <div style="width:80px;height:80px;border-radius:50%;background:rgba(244,63,94,0.1);border:2px solid rgba(244,63,94,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+      <i data-lucide="shield-alert" style="width:36px;height:36px;color:#fb7185;"></i>
+    </div>
+    <h2 style="font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:8px;">Access Denied</h2>
+    <p style="color:var(--muted);font-size:0.9rem;line-height:1.6;margin-bottom:20px;">This app must be launched from Telegram WebApp. Please open it through the Telegram bot.</p>
+    <button class="btn-primary" onclick="location.reload()" style="padding:10px 24px;">
+      <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> Retry
+    </button>
+  </div>
+</div>
+
+<!-- ==================== LOADING SCREEN ==================== -->
+<div id="loading-screen" style="position:fixed;inset:0;background:var(--bg);z-index:999998;justify-content:center;align-items:center;display:flex;">
+  <div style="text-align:center;">
+    <div style="width:60px;height:60px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--accent);animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
+    <p style="color:var(--muted);font-size:0.9rem;font-weight:600;">Loading Devil Otp...</p>
+    <p class="text-muted text-xs" style="margin-top:4px;">Connecting to server</p>
+  </div>
+</div>
+<script>
+// ==================== CONFIGURATION ====================
+const API_BASE = window.location.origin;
+
+// ==================== STATE ====================
+let authToken = null;
+let userData = null;
+let currentServerId = null;
+let currentNumber = null;
+let currentNumberData = null;
+let autoFetchInterval = null;
+let autoFetchStartTime = null;
+let otpLog = [];
+let confirmResolve = null;
+let allServers = [];
+let isLoading = false;
+let retryCount = 0;
+const MAX_RETRIES = 3;
+
+// ==================== ERROR HANDLER ====================
+function handleError(err, context, showToastMsg = true) {
+  const msg = err?.message || err || "Unknown error";
+  console.error(`[${context}]`, err);
+  logSyslog(`ERROR [${context}]: ${msg}`);
+  if (showToastMsg) showToast(msg, "error");
+  return msg;
+}
+
+function showError(containerId, message, autoHide = true) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = `
+    <div class="error-state">
+      <i data-lucide="alert-circle" style="width:40px;height:40px;display:block;margin:0 auto 10px;color:#fb7185;"></i>
+      <h3>Something went wrong</h3>
+      <p>${escapeHtml(message)}</p>
+    </div>
+  `;
+  el.style.display = "block";
+  lucide.createIcons();
+  if (autoHide) {
+    setTimeout(() => { el.style.display = "none"; }, 8000);
+  }
+}
+
+function hideError(containerId) {
+  const el = document.getElementById(containerId);
+  if (el) el.style.display = "none";
+}
+
+function showLoading(containerId) {
+  const el = document.getElementById(containerId);
+  if (el) el.style.display = "block";
+}
+
+function hideLoading(containerId) {
+  const el = document.getElementById(containerId);
+  if (el) el.style.display = "none";
+}
+
+// ==================== ESCAPE HTML (Security) ====================
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text.toString();
+  return div.innerHTML;
+}
+
+// ==================== API CALL WITH RETRY ====================
+async function apiCall(url, options = {}) {
+  const fullUrl = url.startsWith("http") ? url : API_BASE + url;
+  let lastError;
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(fullUrl, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(authToken ? { "x-auth-token": authToken } : {}),
+          ...options.headers
+        }
+      });
+
+      if (res.status === 401) {
+        authToken = null;
+        showToast("Session expired. Please restart.", "error");
+        setTimeout(() => location.reload(), 2000);
+        throw new Error("Unauthorized");
+      }
+
+      if (res.status === 503) {
+        throw new Error("Server under maintenance");
+      }
+
+      const data = await res.json().catch(() => ({
+        ok: false, message: "Invalid server response"
+      }));
+
+      if (!res.ok && !data.ok) {
+        throw new Error(data.message || `HTTP ${res.status}`);
+      }
+
+      retryCount = 0;
+      return data;
+    } catch (err) {
+      lastError = err;
+      if (attempt < MAX_RETRIES) {
+        const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
+        logSyslog(`Retry ${attempt + 1}/${MAX_RETRIES} for ${url} in ${delay}ms`);
+        await sleep(delay);
+      }
+    }
+  }
+
+  retryCount++;
+  if (retryCount >= 3) {
+    document.getElementById("conn-status").innerHTML = `
+      <span class="conn-pulse offline"></span>
+      <span style="color:#fb7185;">Offline</span>
+    `;
+  }
+  throw lastError;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ==================== LOADING BAR ====================
+function showLoadingBar() {
+  const b = document.getElementById("loading-bar");
+  b.style.width = "0%";
+  b.style.opacity = "1";
+  let p = 0;
+  const t = setInterval(() => {
+    p += Math.random() * 8 + 2;
+    b.style.width = Math.min(p, 85) + "%";
+    if (p >= 85) clearInterval(t);
+  }, 100);
+  window._loadingTimer = t;
+}
+
+function hideLoadingBar() {
+  const b = document.getElementById("loading-bar");
+  if (window._loadingTimer) clearInterval(window._loadingTimer);
+  b.style.width = "100%";
+  setTimeout(() => {
+    b.style.opacity = "0";
+    setTimeout(() => { b.style.width = "0%"; }, 300);
+  }, 200);
+}
+
+// ==================== TOAST ====================
+function showToast(msg, type = "info") {
+  const icons = { success: "check-circle", error: "x-circle", warning: "alert-triangle", info: "info" };
+  const colors = { success: "#4ade80", error: "#fb7185", warning: "#fbbf24", info: "#a5b4fc" };
+  const t = document.createElement("div");
+  t.className = "toast " + (type || "info");
+  t.innerHTML = `
+    <i data-lucide="${icons[type] || 'info'}" style="width:18px;height:18px;color:${colors[type] || '#a5b4fc'};flex-shrink:0;"></i>
+    <span style="line-height:1.4;">${escapeHtml(msg)}</span>
+  `;
+  document.getElementById("toast-container").appendChild(t);
+  lucide.createIcons();
+  setTimeout(() => {
+    t.style.animation = "toast-out 0.3s ease forwards";
+    setTimeout(() => t.remove(), 300);
+  }, 4000);
+}
+
+// ==================== SYSLOG ====================
+function toggleSyslog() {
+  document.getElementById("syslog-panel").classList.toggle("open");
+}
+function clearSyslog() {
+  document.getElementById("syslog-body").innerHTML = "";
+}
+function logSyslog(msg) {
+  const body = document.getElementById("syslog-body");
+  const time = new Date().toLocaleTimeString("en-IN", { hour12: false });
+  const entry = document.createElement("div");
+  entry.className = "syslog-entry";
+  entry.innerHTML = `<span style="color:#6366f1;font-weight:600;">[${time}]</span> <span style="color:#94a3b8;">${escapeHtml(msg)}</span>`;
+  body.appendChild(entry);
+  body.scrollTop = body.scrollHeight;
+  while (body.children.length > 200) {
+    body.removeChild(body.firstChild);
+  }
+}
+
+// ==================== THEME ====================
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("devilotp_theme", next);
+  const icon = document.getElementById("theme-icon");
+  if (icon) {
+    icon.setAttribute("data-lucide", next === "dark" ? "moon" : "sun");
+    lucide.createIcons();
+  }
+  const tg = window.Telegram?.WebApp;
+  if (tg?.setHeaderColor) {
+    tg.setHeaderColor(next === "dark" ? "#030712" : "#f0f4ff");
+    tg.setBackgroundColor(next === "dark" ? "#030712" : "#f0f4ff");
+  }
+  logSyslog("Theme switched to " + next);
+}
+
+// ==================== SIDEBAR ====================
+function toggleSidebar() {
+  if (window.innerWidth <= 768) {
+    document.getElementById("sidebar").classList.toggle("mobile-open");
+    document.getElementById("sidebar-overlay").classList.toggle("visible");
+  } else {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+    document.getElementById("main").classList.toggle("full");
+  }
+}
+function closeSidebar() {
+  document.getElementById("sidebar").classList.remove("mobile-open");
+  document.getElementById("sidebar-overlay").classList.remove("visible");
+}
+
+// ==================== SECTION NAVIGATION ====================
+function showSection(name) {
+  document.querySelectorAll(".section").forEach(s => {
+    s.style.display = "none";
+    s.style.animation = "";
+  });
+
+  const target = document.getElementById("section-" + name);
+  if (target) {
+    target.style.display = "block";
+    target.offsetHeight;
+    target.style.animation = "fadeIn 0.4s ease";
+  }
+
+  document.querySelectorAll(".nav-item[data-section]").forEach(n => n.classList.remove("active"));
+  const nav = document.querySelector('.nav-item[data-section="' + name + '"');
+  if (nav) nav.classList.add("active");
+
+  const headings = {
+    dashboard: { icon: "layout-dashboard", text: "Dashboard" },
+    numbers: { icon: "smartphone", text: "Numbers" },
+    subscription: { icon: "crown", text: "Subscription" },
+    deposit: { icon: "wallet", text: "Deposit" },
+    referral: { icon: "users", text: "Referral" },
+    promo: { icon: "ticket", text: "Promo Code" },
+    leaderboard: { icon: "trophy", text: "Leaderboard" },
+    profile: { icon: "user-circle", text: "Profile" },
+    transactions: { icon: "receipt-text", text: "Transactions" },
+    admin: { icon: "shield-check", text: "Admin Panel" }
+  };
+  const h = headings[name] || { icon: "circle", text: name };
+  document.getElementById("section-heading").innerHTML = `
+    <i data-lucide="${h.icon}" style="width:20px;height:20px;color:#a5b4fc;"></i>
+    ${h.text}
+  `;
+  lucide.createIcons();
+
+  if (name === "leaderboard") loadLeaderboard("refer");
+  if (name === "transactions") loadTransactions("all");
+  if (name === "numbers" && allServers.length > 0 && !document.getElementById("server-select2").value) {
+    document.getElementById("server-select2").value = allServers[0].serverId;
+    loadNumbers2();
+  }
+
+  logSyslog("Opened section: " + name);
+
+  if (window.innerWidth <= 768) closeSidebar();
+}
+
+// ==================== UPDATE LAST SYNC ====================
+function updateLastSync() {
+  document.getElementById("last-sync").textContent = "Synced: " + new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+}
+
+// ==================== CONFIRM MODAL ====================
+function openConfirm(message) {
+  document.getElementById("confirm-message").textContent = message;
+  document.getElementById("confirm-modal").classList.add("open");
+  return new Promise(resolve => { confirmResolve = resolve; });
+}
+function closeConfirm(result) {
+  document.getElementById("confirm-modal").classList.remove("open");
+  if (confirmResolve) {
+    confirmResolve(result);
+    confirmResolve = null;
+  }
+}
+
+// ==================== NUMBER MODAL ====================
+function openNumber(number, data) {
+  currentNumber = number;
+  currentNumberData = data || {};
+  document.getElementById("modal-number").textContent = number;
+  document.getElementById("modal-server").textContent = "Server: " + (data?.server || currentServerId || "--");
+  document.getElementById("modal-status").textContent = "Status: " + (data?.status || "Unknown");
+  document.getElementById("modal-battery").textContent = "Battery: " + (data?.battery || "--") + "%";
+
+  const statusBadge = document.getElementById("modal-status");
+  if (data?.status === "Online") {
+    statusBadge.className = "badge badge-online";
+  } else {
+    statusBadge.className = "badge badge-offline";
+  }
+
+  document.getElementById("modal-body").innerHTML = `
+    <div id="modal-info" style="margin-bottom:14px;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+        <span class="badge" id="modal-server">Server: ${escapeHtml(data?.server || currentServerId || "--")}</span>
+        <span class="badge ${data?.status === 'Online' ? 'badge-online' : 'badge-offline'}" id="modal-status">${escapeHtml(data?.status || "Unknown")}</span>
+        <span class="badge" id="modal-battery">Battery: ${escapeHtml(data?.battery || "--")}%</span>
+      </div>
+      <p style="color:var(--muted);font-size:0.85rem;">Click "Fetch OTP" to retrieve the latest OTP for this number.</p>
+    </div>
+    <div id="modal-error" style="display:none;"></div>
+  `;
+  document.getElementById("otp-log").innerHTML = "";
+  otpLog = [];
+  document.getElementById("fetch-otp-btn").disabled = false;
+  document.getElementById("auto-fetch-btn").style.display = "";
+  document.getElementById("stop-auto-btn").style.display = "none";
+  document.getElementById("number-modal").classList.add("open");
+  lucide.createIcons();
+  logSyslog("Opened number: " + number);
+}
+
+function closeModal() {
+  stopAutoFetch();
+  document.getElementById("number-modal").classList.remove("open");
+  currentNumber = null;
+  currentNumberData = null;
+}
+
+// ==================== INIT ====================
+document.addEventListener("DOMContentLoaded", async () => {
+  showLoadingBar();
+
+  const savedTheme = localStorage.getItem("devilotp_theme") || "dark";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+
+  const tg = window.Telegram?.WebApp;
+  if (!tg) {
+    document.getElementById("loading-screen").style.display = "none";
+    document.getElementById("error-screen").style.display = "flex";
+    lucide.createIcons();
+    return;
+  }
+
+  tg.ready();
+  tg.expand();
+  tg.setHeaderColor(savedTheme === "dark" ? "#030712" : "#f0f4ff");
+  tg.setBackgroundColor(savedTheme === "dark" ? "#030712" : "#f0f4ff");
+
+  const initData = tg.initData;
+  if (!initData) {
+    document.getElementById("loading-screen").style.display = "none";
+    document.getElementById("error-screen").style.display = "flex";
+    lucide.createIcons();
+    return;
+  }
+
+  try {
+    logSyslog("Authenticating with server...");
+    const data = await apiCall("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ initData })
+    });
+
+    if (!data.ok) throw new Error(data.message || "Login failed");
+
+    if (!data.verified) {
+      hideLoadingBar();
+      document.getElementById("loading-screen").style.display = "none";
+      let channelsHtml = "";
+      if (data.channelsOk === false) {
+        channelsHtml = '<p style="color:#fbbf24;margin-top:12px;font-size:0.85rem;">Please join all required channels first.</p>';
+      }
+      document.body.innerHTML = `
+        <div style="text-align:center;padding:40px;color:#fbbf24;font-family:Inter,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;">
+          <div>
+            <i data-lucide="shield" style="width:48px;height:48px;display:block;margin:0 auto 16px;"></i>
+            <h2 style="font-size:1.3rem;margin-bottom:8px;">Verification Required</h2>
+            <p style="font-size:0.9rem;color:var(--muted);max-width:300px;margin:0 auto;">${escapeHtml(data.message || "Verification incomplete")}</p>
+            ${channelsHtml}
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    authToken = data.token;
+    userData = data.user;
+
+    // Update UI
+    updateUserUI(data);
+
+    if (data.isAdmin) {
+      document.getElementById("admin-nav-item").style.display = "flex";
+      logSyslog("Admin access granted");
+    }
+
+    logSyslog("Login successful - User: " + (userData.firstName || userData.userId));
+
+    // Load data
+    await loadDashboard();
+    await loadPlans();
+    await loadReferralInfo();
+    await loadProfile();
+
+    showSection("dashboard");
+
+    // Setup nav clicks
+    document.querySelectorAll(".nav-item[data-section]").forEach(el => {
+      el.addEventListener("click", function() {
+        const section = this.dataset.section;
+        if (section) showSection(section);
+      });
+    });
+
+    // Setup modals
+    document.getElementById("number-modal").addEventListener("click", function(e) {
+      if (e.target === this) closeModal();
+    });
+    document.getElementById("confirm-modal").addEventListener("click", function(e) {
+      if (e.target === this) closeConfirm(false);
+    });
+
+    lucide.createIcons();
+    updateLastSync();
+    setInterval(updateLastSync, 30000);
+
+    document.getElementById("loading-screen").style.display = "none";
+    logSyslog("App ready - Devil Otp v3.1");
+    hideLoadingBar();
+
+  } catch (err) {
+    hideLoadingBar();
+    document.getElementById("loading-screen").style.display = "none";
+    handleError(err, "INIT", false);
+    document.body.innerHTML = `
+      <div style="text-align:center;padding:40px;color:#fb7185;font-family:Inter,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;">
+        <div>
+          <i data-lucide="wifi-off" style="width:48px;height:48px;display:block;margin:0 auto 16px;"></i>
+          <h2 style="font-size:1.3rem;margin-bottom:8px;">Connection Error</h2>
+          <p style="font-size:0.9rem;color:var(--muted);max-width:300px;margin:0 auto 16px;">${escapeHtml(err.message)}</p>
+          <button onclick="location.reload()" class="btn-primary" style="padding:10px 24px;">
+            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> Retry
+          </button>
+        </div>
+      </div>
+    `;
+    lucide.createIcons();
+  }
+});
+
+// ==================== UPDATE USER UI ====================
+function updateUserUI(data) {
+  const u = data.user;
+  document.getElementById("user-name").textContent = escapeHtml(u.firstName || u.username || "User");
+  document.getElementById("user-points").textContent = (u.points || 0).toLocaleString();
+  document.getElementById("dash-points").textContent = (u.points || 0).toLocaleString();
+  document.getElementById("dash-refs").textContent = (u.totalReferrals || 0).toLocaleString();
+
+  const hasSub = data.hasSubscription;
+  const subBadge = document.getElementById("sub-status");
+  if (hasSub) {
+    subBadge.innerHTML = '<span class="status-dot online" style="width:6px;height:6px;margin-right:4px;"></span>Active';
+    subBadge.className = "badge badge-online";
+  } else {
+    subBadge.innerHTML = '<span class="status-dot offline" style="width:6px;height:6px;margin-right:4px;"></span>No Subscription';
+    subBadge.className = "badge badge-offline";
+  }
+}
+
+// ==================== LOAD DASHBOARD ====================
+async function loadDashboard() {
+  try {
+    logSyslog("Loading dashboard...");
+    showLoading("numbers-loading");
+    hideError("numbers-error");
+
+    const data = await apiCall("/api/dashboard");
+    if (!data.ok) throw new Error(data.message || "Failed to load dashboard");
+
+    allServers = data.servers || [];
+
+    const sel1 = document.getElementById("server-select");
+    const sel2 = document.getElementById("server-select2");
+
+    const opts = '<option value="">Select Server Gateway</option>' + allServers.map(s => 
+      `<option value="${s.serverId}">${escapeHtml(s.serverName)}</option>`
+    ).join("");
+
+    sel1.innerHTML = opts;
+    sel2.innerHTML = opts;
+
+    if (allServers.length > 0) {
+      sel1.value = allServers[0].serverId;
+      sel2.value = allServers[0].serverId;
+      await loadNumbers();
+      await loadNumbers2();
+    }
+
+    const u = data.user;
+    if (u) {
+      document.getElementById("profile-id").textContent = escapeHtml(u.userId);
+      document.getElementById("profile-id-display").textContent = "ID: " + u.userId;
+      document.getElementById("profile-name").textContent = escapeHtml(u.firstName || u.username || "User");
+      document.getElementById("profile-name-display").textContent = escapeHtml(u.firstName || u.username || "User");
+      document.getElementById("profile-points").textContent = (u.points || 0).toLocaleString();
+      document.getElementById("profile-sub").innerHTML = data.hasSubscription 
+        ? '<span class="badge badge-online" style="font-size:0.68rem;">Active</span>'
+        : '<span class="badge badge-offline" style="font-size:0.68rem;">None</span>';
+      document.getElementById("profile-device").innerHTML = u.isDeviceVerified 
+        ? '<span class="badge badge-online" style="font-size:0.68rem;">Yes</span>'
+        : '<span class="badge badge-offline" style="font-size:0.68rem;">No</span>';
+      document.getElementById("profile-refs").textContent = (u.totalReferrals || 0).toLocaleString();
+      document.getElementById("dash-points").textContent = (u.points || 0).toLocaleString();
+      document.getElementById("dash-refs").textContent = (u.totalReferrals || 0).toLocaleString();
+      document.getElementById("user-points").textContent = (u.points || 0).toLocaleString();
+
+      // Update subscription section
+      if (data.hasSubscription && u.subscriptionExpires) {
+        document.getElementById("current-sub-info").style.display = "block";
+        document.getElementById("no-sub-info").style.display = "none";
+        document.getElementById("sub-expiry-text").textContent = "Expires: " + new Date(u.subscriptionExpires).toLocaleString("en-IN");
+      } else {
+        document.getElementById("current-sub-info").style.display = "none";
+        document.getElementById("no-sub-info").style.display = "block";
+      }
+    }
+
+    logSyslog("Dashboard loaded (" + allServers.length + " servers)");
+  } catch (err) {
+    handleError(err, "DASHBOARD");
+  }
+}
+
+// ==================== LOAD NUMBERS (DASHBOARD) ====================
+async function loadNumbers() {
+  const serverId = document.getElementById("server-select").value;
+  if (!serverId) return;
+  currentServerId = serverId;
+  const container = document.getElementById("numbers-container");
+  container.innerHTML = `<div style="text-align:center;padding:30px;"><div class="spinner" style="width:32px;height:32px;border-width:3px;"></div><p class="text-muted" style="margin-top:12px;font-size:0.85rem;">Fetching numbers...</p></div>`;
+  hideError("numbers-error");
+
+  try {
+    const data = await apiCall("/api/numbers/" + serverId);
+    if (!data.ok) throw new Error(data.message || "Failed");
+
+    const numbers = data.numbers || [];
+    document.getElementById("total-numbers").textContent = numbers.length;
+    document.getElementById("active-numbers").textContent = numbers.filter(n => n.status === "Online" || n.status === "Available").length;
+
+    if (numbers.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i data-lucide="inbox" style="width:40px;height:40px;"></i>
+          <p>No numbers available on this server</p>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    container.innerHTML = numbers.map((n, i) => {
+      const isOnline = n.status === "Online" || n.status === "Available";
+      const battLevel = parseInt(n.battery) || 0;
+      let battClass = "high";
+      if (battLevel < 30) battClass = "low";
+      else if (battLevel < 60) battClass = "medium";
+
+      return `
+        <div class="device-card" onclick="openNumber('${escapeHtml(n.number)}', ${JSON.stringify(n).replace(/"/g, '&quot;')})" style="animation-delay:${Math.min(i * 0.04, 0.5)}s">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span class="number-display">${escapeHtml(n.number)}</span>
+            <span class="badge ${isOnline ? 'badge-online' : 'badge-offline'}" style="font-size:0.68rem;">
+              <span class="status-dot ${isOnline ? 'online' : 'offline'}" style="width:5px;height:5px;margin-right:3px;"></span>
+              ${escapeHtml(n.status)}
+            </span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span class="text-muted text-xs">${escapeHtml(n.deviceName || "Device")}</span>
+            <span class="text-muted text-xs">Srv: ${escapeHtml(n.server || "--")}</span>
+          </div>
+          ${n.battery ? `
+          <div class="batt-track">
+            <div class="batt-fill ${battClass}" style="width:${battLevel}%"></div>
+          </div>
+          <div class="text-muted text-xs" style="text-align:right;margin-top:2px;">${battLevel}%</div>
+          ` : ""}
+        </div>
+      `;
+    }).join("");
+
+    logSyslog("Loaded " + numbers.length + " numbers from server " + serverId);
+    lucide.createIcons();
+  } catch (err) {
+    container.innerHTML = "";
+    showError("numbers-error", err.message);
+    logSyslog("Numbers error: " + err.message);
+  }
+}
+
+function refreshDashboardNumbers() {
+  loadNumbers();
+  showToast("Refreshing numbers...", "info");
+}
+
+// ==================== LOAD NUMBERS (ALL) ====================
+async function loadNumbers2() {
+  const serverId = document.getElementById("server-select2").value;
+  if (!serverId) return;
+  const container = document.getElementById("numbers-container2");
+  const loading = document.getElementById("numbers2-loading");
+
+  container.innerHTML = "";
+  showLoading("numbers2-loading");
+  hideError("numbers2-error");
+
+  try {
+    const data = await apiCall("/api/numbers/" + serverId);
+    if (!data.ok) throw new Error(data.message || "Failed");
+
+    hideLoading("numbers2-loading");
+    const numbers = data.numbers || [];
+    document.getElementById("numbers-count").textContent = numbers.length + " numbers";
+
+    if (numbers.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i data-lucide="inbox" style="width:40px;height:40px;"></i>
+          <p>No numbers available on this server</p>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    container.innerHTML = numbers.map((n, i) => {
+      const isOnline = n.status === "Online" || n.status === "Available";
+      const battLevel = parseInt(n.battery) || 0;
+      let battClass = "high";
+      if (battLevel < 30) battClass = "low";
+      else if (battLevel < 60) battClass = "medium";
+
+      return `
+        <div class="device-card" onclick="openNumber('${escapeHtml(n.number)}', ${JSON.stringify(n).replace(/"/g, '&quot;')})" style="animation-delay:${Math.min(i * 0.03, 0.5)}s">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span class="number-display">${escapeHtml(n.number)}</span>
+            <span class="badge ${isOnline ? 'badge-online' : 'badge-offline'}" style="font-size:0.68rem;">
+              <span class="status-dot ${isOnline ? 'online' : 'offline'}" style="width:5px;height:5px;margin-right:3px;"></span>
+              ${escapeHtml(n.status)}
+            </span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span class="text-muted text-xs">${escapeHtml(n.deviceName || "Device")}</span>
+            <span class="text-muted text-xs">Srv: ${escapeHtml(n.server || "--")}</span>
+          </div>
+          ${n.battery ? `
+          <div class="batt-track">
+            <div class="batt-fill ${battClass}" style="width:${battLevel}%"></div>
+          </div>
+          ` : ""}
+        </div>
+      `;
+    }).join("");
+
+    lucide.createIcons();
+  } catch (err) {
+    hideLoading("numbers2-loading");
+    showError("numbers2-error", err.message);
+  }
+}
+
+function refreshAllNumbers() {
+  loadNumbers2();
+  showToast("Refreshing all numbers...", "info");
+}
+
+// ==================== FETCH OTP ====================
+async function fetchOtp() {
+  if (!currentNumber || !currentServerId) {
+    showToast("No number selected", "warning");
+    return;
+  }
+
+  const btn = document.getElementById("fetch-otp-btn");
+  const log = document.getElementById("otp-log");
+  btn.disabled = true;
+  log.innerHTML = `<div style="text-align:center;padding:16px;"><div class="spinner" style="width:24px;height:24px;border-width:2px;"></div><p class="text-muted" style="margin-top:8px;font-size:0.8rem;">Fetching OTP...</p></div>`;
+
+  try {
+    const data = await apiCall("/api/fetch-otp", {
+      method: "POST",
+      body: JSON.stringify({ number: currentNumber, serverId: currentServerId })
+    });
+
+    if (!data.ok) throw new Error(data.message || "Failed to fetch OTP");
+
+    const otps = data.otps || [];
+    if (otps.length === 0) {
+      log.innerHTML = `<div class="empty-state" style="padding:20px;"><i data-lucide="inbox" style="width:28px;height:28px;"></i><p class="text-muted" style="font-size:0.8rem;">No OTP found yet</p></div>`;
+      lucide.createIcons();
+      return;
+    }
+
+    otps.forEach(newOtp => {
+      const exists = otpLog.some(o => 
+        (o.otp_1 && o.otp_1 === newOtp.otp_1) || 
+        (o.message && o.message === newOtp.message && o.sender === newOtp.sender)
+      );
+      if (!exists) otpLog.push(newOtp);
+    });
+
+    renderOtpLog();
+    logSyslog("OTP fetched for " + currentNumber);
+    showToast("OTP retrieved successfully!", "success");
+  } catch (err) {
+    log.innerHTML = `<div class="error-state" style="padding:16px;"><p style="font-size:0.8rem;">${escapeHtml(err.message)}</p></div>`;
+    logSyslog("OTP fetch error: " + err.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function renderOtpLog() {
+  const log = document.getElementById("otp-log");
+  if (otpLog.length === 0) {
+    log.innerHTML = `<div class="empty-state" style="padding:20px;"><p class="text-muted" style="font-size:0.8rem;">No OTPs yet</p></div>`;
+    return;
+  }
+
+  log.innerHTML = otpLog.slice().reverse().map((o, i) => `
+    <div style="border-bottom:1px solid var(--border); padding:12px 0; animation: fadeIn 0.3s ease ${i * 0.05}s both;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;align-items:center;">
+        <strong style="color:var(--text);font-size:0.86rem;display:flex;align-items:center;gap:6px;">
+          <i data-lucide="mail" style="width:14px;height:14px;color:#a5b4fc;"></i>
+          ${escapeHtml(o.sender || "Unknown")}
+        </strong>
+        <span class="text-muted text-xs">${escapeHtml(o.time || "")}</span>
+      </div>
+      <div style="color:var(--muted);font-size:0.8rem;margin-bottom:8px;line-height:1.4;">${escapeHtml(o.message || o.text || "")}</div>
+      ${o.otp_1 ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span class="text-xs text-muted">OTP 1:</span><span style="color:#fbbf24;font-weight:800;font-size:1.15rem;font-family:'Courier New',monospace;letter-spacing:0.05em;">${escapeHtml(o.otp_1)}</span></div>` : ""}
+      ${o.otp_2 ? `<div style="display:flex;align-items:center;gap:8px;"><span class="text-xs text-muted">OTP 2:</span><span style="color:#fbbf24;font-weight:800;font-size:1.15rem;font-family:'Courier New',monospace;letter-spacing:0.05em;">${escapeHtml(o.otp_2)}</span></div>` : ""}
+    </div>
+  `).join("");
+  log.scrollTop = log.scrollHeight;
+  lucide.createIcons();
+}
+
+// ==================== AUTO FETCH ====================
+function startAutoFetch() {
+  if (autoFetchInterval) {
+    showToast("Auto-fetch already running", "warning");
+    return;
+  }
+  if (!currentNumber || !currentServerId) {
+    showToast("No number selected", "warning");
+    return;
+  }
+
+  otpLog = [];
+  autoFetchStartTime = Date.now();
+  document.getElementById("otp-log").innerHTML = `
+    <div style="text-align:center;padding:16px;">
+      <div class="spinner" style="width:24px;height:24px;border-width:2px;"></div>
+      <p class="text-muted" style="margin-top:8px;font-size:0.8rem;">Auto-fetch active (10 min max)</p>
+      <p class="text-muted text-xs" id="auto-fetch-timer" style="margin-top:4px;">Elapsed: 0s</p>
+    </div>
+  `;
+
+  document.getElementById("auto-fetch-btn").style.display = "none";
+  document.getElementById("stop-auto-btn").style.display = "";
+
+  logSyslog("Auto-fetch started for " + currentNumber);
+  showToast("Auto-fetch started (10 min max)", "success");
+
+  // Update timer
+  const timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - autoFetchStartTime) / 1000);
+    const timerEl = document.getElementById("auto-fetch-timer");
+    if (timerEl) timerEl.textContent = `Elapsed: ${elapsed}s`;
+  }, 1000);
+
+  autoFetchInterval = setInterval(async () => {
+    const elapsed = Date.now() - autoFetchStartTime;
+    if (elapsed >= 600000) { // 10 minutes
+      stopAutoFetch();
+      clearInterval(timerInterval);
+      document.getElementById("otp-log").innerHTML += `
+        <div style="padding:12px 0;text-align:center;border-top:1px solid var(--border);">
+          <span style="color:#fbbf24;font-size:0.8rem;font-weight:600;">Auto-fetch completed (10 min)</span>
+        </div>
+      `;
+      showToast("Auto-fetch completed", "info");
+      return;
+    }
+    await fetchOtp();
+  }, 5000);
+
+  window._timerInterval = timerInterval;
+}
+
+function stopAutoFetch() {
+  if (autoFetchInterval) {
+    clearInterval(autoFetchInterval);
+    autoFetchInterval = null;
+    if (window._timerInterval) clearInterval(window._timerInterval);
+    document.getElementById("otp-log").innerHTML += `
+      <div style="padding:10px 0;text-align:center;border-top:1px solid var(--border);">
+        <span class="text-muted" style="font-size:0.8rem;">Auto-fetch stopped by user</span>
+      </div>
+    `;
+    document.getElementById("auto-fetch-btn").style.display = "";
+    document.getElementById("stop-auto-btn").style.display = "none";
+    logSyslog("Auto-fetch stopped");
+  }
+}
+
+// ==================== LOAD PLANS ====================
+async function loadPlans() {
+  try {
+    logSyslog("Loading plans...");
+    showLoading("plans-loading");
+    hideError("plans-error");
+
+    const data = await apiCall("/api/plans");
+    if (!data.ok) throw new Error(data.message || "Failed");
+
+    hideLoading("plans-loading");
+    const plans = data.plans || [];
+    const container = document.getElementById("plans-container");
+
+    if (plans.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i data-lucide="package-x" style="width:40px;height:40px;"></i>
+          <p>No plans available right now</p>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    container.innerHTML = plans.map((p, i) => {
+      const hours = p.durationHours;
+      const days = Math.floor(hours / 24);
+      const remHours = hours % 24;
+      let durationText = "";
+      if (days > 0) durationText += days + "d ";
+      if (remHours > 0) durationText += remHours + "h";
+
+      return `
+        <div class="plan-card" style="animation-delay:${Math.min(i * 0.06, 0.5)}s">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div style="font-weight:800;font-size:1rem;margin-bottom:4px;">${escapeHtml(p.planName)}</div>
+              <div style="color:var(--muted);font-size:0.8rem;">
+                <i data-lucide="clock" style="width:12px;height:12px;display:inline;vertical-align:middle;margin-right:3px;"></i>
+                ${durationText}
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div class="plan-price">${p.cost}</div>
+              <div class="text-muted text-xs">points</div>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="buyPlan('${p._id}')" style="width:100%;margin-top:14px;justify-content:center;">
+            <i data-lucide="zap" style="width:14px;height:14px;"></i> Buy Now
+          </button>
+        </div>
+      `;
+    }).join("");
+
+    logSyslog(plans.length + " plans loaded");
+    lucide.createIcons();
+  } catch (err) {
+    hideLoading("plans-loading");
+    showError("plans-error", err.message);
+    logSyslog("Plans error: " + err.message);
+  }
+}
+
+// ==================== BUY PLAN ====================
+async function buyPlan(planId) {
+  if (!await openConfirm("Buy this plan? Points will be deducted from your balance.")) return;
+
+  try {
+    const res = await apiCall("/api/buy-plan", {
+      method: "POST",
+      body: JSON.stringify({ planId })
+    });
+
+    if (!res.ok) throw new Error(res.message);
+
+    const expiresDate = new Date(res.expires);
+    showToast("Subscription activated! Expires: " + expiresDate.toLocaleString("en-IN"), "success");
+    logSyslog("Plan purchased - expires: " + expiresDate.toLocaleString());
+    await loadDashboard();
+    await loadProfile();
+  } catch (err) {
+    showToast("Error: " + err.message, "error");
+    logSyslog("Buy plan error: " + err.message);
+  }
+}
+
+// ==================== DEPOSIT ====================
+async function initiateDeposit() {
+  const amountInput = document.getElementById("deposit-amount");
+  const amount = parseInt(amountInput.value);
+
+  if (!amount || amount < 1 || isNaN(amount)) {
+    showToast("Enter a valid amount", "warning");
+    amountInput.focus();
+    return;
+  }
+
+  const btn = document.getElementById("deposit-btn");
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Processing...`;
+  hideError("deposit-error");
+
+  try {
+    logSyslog("Initiating deposit: " + amount + " INR");
+    const data = await apiCall("/api/deposit/initiate", {
+      method: "POST",
+      body: JSON.stringify({ amount })
+    });
+
+    if (!data.ok) throw new Error(data.message);
+
+    document.getElementById("deposit-info").innerHTML = `
+      <div class="glass" style="padding:18px;margin-top:12px;border-color:rgba(99,102,241,0.2);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <i data-lucide="receipt" style="width:16px;height:16px;color:#a5b4fc;"></i>
+          <span style="font-weight:700;font-size:0.9rem;">Deposit Invoice</span>
+        </div>
+        <div style="display:grid;gap:8px;margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;">
+            <span class="text-muted text-sm">Order ID</span>
+            <span class="font-mono" style="font-weight:600;font-size:0.85rem;color:#a5b4fc;">${escapeHtml(data.orderId)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span class="text-muted text-sm">Amount</span>
+            <span style="font-weight:600;font-size:0.85rem;">${data.amount} INR</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span class="text-muted text-sm">You Receive</span>
+            <span style="font-weight:700;font-size:0.9rem;color:#4ade80;">${data.points} Points</span>
+          </div>
+        </div>
+        <div style="text-align:center;margin-bottom:12px;">
+          <img src="${escapeHtml(data.qrUrl)}" alt="QR Code" style="max-width:180px; border-radius:12px; border:1px solid var(--border);" onerror="this.style.display='none'">
+        </div>
+        <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:10px;padding:10px 12px;">
+          <p style="margin:0;font-size:0.75rem;color:var(--muted);display:flex;align-items:center;gap:6px;">
+            <i data-lucide="alert-circle" style="width:12px;height:12px;color:#fbbf24;flex-shrink:0;"></i>
+            After payment, enter Order ID below and click Verify
+          </p>
+        </div>
+      </div>
+    `;
+    document.getElementById("deposit-verify").style.display = "block";
+    document.getElementById("order-id-input").value = data.orderId;
+    logSyslog("Deposit order created: " + data.orderId);
+    lucide.createIcons();
+  } catch (err) {
+    showError("deposit-error", err.message);
+    logSyslog("Deposit error: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i data-lucide="qr-code" style="width:14px;height:14px;"></i> Generate QR / Order`;
+    lucide.createIcons();
+  }
+}
+
+async function verifyDeposit() {
+  const orderId = document.getElementById("order-id-input").value.trim();
+  if (!orderId) {
+    showToast("Enter Order ID", "warning");
+    return;
+  }
+
+  const btn = document.getElementById("verify-btn");
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Verifying...`;
+
+  try {
+    logSyslog("Verifying deposit: " + orderId);
+    const data = await apiCall("/api/deposit/verify", {
+      method: "POST",
+      body: JSON.stringify({ orderId })
+    });
+
+    if (!data.ok) throw new Error(data.message);
+
+    showToast("Deposit verified! +" + data.points + " points", "success");
+    logSyslog("Deposit verified: +" + data.points + " points");
+    await loadDashboard();
+    await loadProfile();
+    document.getElementById("deposit-verify").style.display = "none";
+    document.getElementById("deposit-info").innerHTML = `
+      <div class="success-state">
+        <i data-lucide="check-circle" style="width:48px;height:48px;"></i>
+        <p style="color:#4ade80;font-weight:700;font-size:1rem;margin-top:8px;">Payment Verified!</p>
+        <p class="text-muted" style="font-size:0.85rem;">+${data.points} points added to your wallet</p>
+      </div>
+    `;
+    lucide.createIcons();
+  } catch (err) {
+    showToast("Error: " + err.message, "error");
+    logSyslog("Verify error: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i data-lucide="check-circle" style="width:14px;height:14px;"></i> Verify Payment`;
+    lucide.createIcons();
+  }
+}
+
+// ==================== REFERRAL ====================
+async function loadReferralInfo() {
+  try {
+    const data = await apiCall("/api/referral");
+    if (!data.ok) throw new Error(data.message || "Failed");
+
+    const link = "https://t.me/" + (data.botUsername || "FireByWorldBot") + "?start=" + data.userId;
+    document.getElementById("referral-link").innerHTML = `
+      <a href="${link}" target="_blank" style="color:#c7d2fe;text-decoration:none;word-break:break-all;">${escapeHtml(link)}</a>
+    `;
+    document.getElementById("referral-count").textContent = (data.totalReferrals || 0).toLocaleString();
+    document.getElementById("refer-points").textContent = data.referPoints || 10;
+    document.getElementById("friend-points").textContent = data.friendPoints || 5;
+
+    logSyslog("Referral info loaded");
+  } catch (err) {
+    logSyslog("Referral error: " + err.message);
+  }
+}
+
+function copyReferralLink() {
+  const linkEl = document.getElementById("referral-link");
+  const link = linkEl.querySelector("a")?.href || linkEl.textContent;
+  navigator.clipboard.writeText(link).then(() => {
+    const tooltip = document.getElementById("copy-tooltip");
+    tooltip.classList.add("show");
+    showToast("Link copied!", "success");
+    setTimeout(() => tooltip.classList.remove("show"), 2000);
+  }).catch(() => {
+    showToast("Failed to copy", "error");
+  });
+}
+
+// ==================== PROMO ====================
+async function claimPromo() {
+  const input = document.getElementById("promo-input");
+  const code = input.value.trim();
+  if (!code) {
+    showToast("Enter promo code", "warning");
+    input.focus();
+    return;
+  }
+
+  const btn = document.getElementById("promo-btn");
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Claiming...`;
+  hideError("promo-error");
+
+  try {
+    logSyslog("Claiming promo: " + code);
+    const data = await apiCall("/api/promo/claim", {
+      method: "POST",
+      body: JSON.stringify({ code })
+    });
+
+    if (!data.ok) throw new Error(data.message);
+
+    document.getElementById("promo-result").innerHTML = `
+      <div class="success-state" style="padding:16px;">
+        <i data-lucide="party-popper" style="width:32px;height:32px;color:#4ade80;"></i>
+        <p style="color:#4ade80;font-weight:700;margin-top:8px;">Promo Claimed!</p>
+        <p class="text-muted" style="font-size:0.85rem;">You received <strong style="color:#fbbf24;">${data.points}</strong> points</p>
+      </div>
+    `;
+    showToast("Promo claimed! +" + data.points + " points", "success");
+    logSyslog("Promo claimed: +" + data.points);
+    input.value = "";
+    await loadDashboard();
+    await loadProfile();
+    lucide.createIcons();
+  } catch (err) {
+    document.getElementById("promo-result").innerHTML = `
+      <div class="error-state" style="padding:16px;">
+        <p style="font-size:0.85rem;">${escapeHtml(err.message)}</p>
+      </div>
+    `;
+    showToast(err.message, "error");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i data-lucide="zap" style="width:14px;height:14px;"></i> Claim`;
+    lucide.createIcons();
+  }
+}
+
+// ==================== LEADERBOARD ====================
+async function loadLeaderboard(type, btn) {
+  if (btn) {
+    document.querySelectorAll("[data-lb]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  }
+
+  const container = document.getElementById("leaderboard-list");
+  showLoading("leaderboard-loading");
+  hideError("leaderboard-error");
+  container.innerHTML = "";
+
+  try {
+    const data = await apiCall("/api/leaderboard/" + type);
+    if (!data.ok) throw new Error(data.message || "Failed");
+
+    hideLoading("leaderboard-loading");
+    const entries = data.entries || [];
+
+    if (entries.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i data-lucide="trophy" style="width:40px;height:40px;"></i>
+          <p>No entries yet. Be the first!</p>
+        </div>
+      `;
+      lucide.createIcons();
+      return;
+    }
+
+    const medals = ["🥇", "🥈", "🥉"];
+    const medalColors = ["#fbbf24", "#94a3b8", "#b45309"];
+
+    container.innerHTML = entries.map((e, i) => `
+      <div class="lb-entry ${i < 3 ? 'top-3' : ''}" style="animation-delay:${Math.min(i * 0.04, 0.5)}s">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-weight:800;font-size:1.1rem;color:${i < 3 ? medalColors[i] : 'var(--muted)'};min-width:28px;text-align:center;">
+            ${medals[i] || (i + 1) + "."}
+          </span>
+          <div>
+            <div style="font-weight:600;font-size:0.9rem;">${escapeHtml(e.name)}</div>
+            <div class="text-muted text-xs">ID: ${escapeHtml(e.userId?.toString().slice(0, 6) + "***" || "--")}</div>
+          </div>
+        </div>
+        <span class="badge" style="font-size:0.82rem;font-weight:700;background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.3);color:#c7d2fe;">
+          ${escapeHtml(e.score?.toString() || "0")}
+        </span>
+      </div>
+    `).join("");
+
+    logSyslog("Leaderboard loaded: " + type);
+    lucide.createIcons();
+  } catch (err) {
+    hideLoading("leaderboard-loading");
+    showError("leaderboard-error", err.message);
+  }
+}
+
+// ==================== PROFILE ====================
+async function loadProfile() {
+  try {
+    const data = await apiCall("/api/dashboard");
+    if (!data.ok) return;
+
+    const u = data.user;
+    document.getElementById("profile-id").textContent = escapeHtml(u.userId);
+    document.getElementById("profile-id-display").textContent = "ID: " + u.userId;
+    document.getElementById("profile-name").textContent = escapeHtml(u.firstName || u.username || "User");
+    document.getElementById("profile-name-display").textContent = escapeHtml(u.firstName || u.username || "User");
+    document.getElementById("profile-points").textContent = (u.points || 0).toLocaleString();
+    document.getElementById("profile-sub").innerHTML = data.hasSubscription 
+      ? '<span class="badge badge-online" style="font-size:0.68rem;">Active</span>'
+      : '<span class="badge badge-offline" style="font-size:0.68rem;">None</span>';
+    document.getElementById("profile-device").innerHTML = u.isDeviceVerified 
+      ? '<span class="badge badge-online" style="font-size:0.68rem;">Yes</span>'
+      : '<span class="badge badge-offline" style="font-size:0.68rem;">No</span>';
+    document.getElementById("profile-refs").textContent = (u.totalReferrals || 0).toLocaleString();
+    document.getElementById("user-points").textContent = (u.points || 0).toLocaleString();
+    document.getElementById("dash-points").textContent = (u.points || 0).toLocaleString();
+    document.getElementById("dash-refs").textContent = (u.totalReferrals || 0).toLocaleString();
+  } catch (err) {
+    console.error("Profile load error:", err);
+  }
+}
+
+// ==================== TRANSACTIONS ====================
+async function loadTransactions(type, btn) {
+  if (btn) {
+    document.querySelectorAll("[data-tx]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  }
+
+  const container = document.getElementById("transactions-list");
+  showLoading("transactions-loading");
+  hideError("transactions-error");
+  container.innerHTML = "";
+
+  try {
+    // For now, we'll show a placeholder since we need a dedicated transactions API
+    // In production, add GET /api/transactions?type=xxx endpoint
+    hideLoading("transactions-loading");
+    container.innerHTML = `
+      <div class="empty-state">
+        <i data-lucide="receipt-text" style="width:40px;height:40px;"></i>
+        <p>Transaction history coming soon</p>
+      </div>
+    `;
+    lucide.createIcons();
+  } catch (err) {
+    hideLoading("transactions-loading");
+    showError("transactions-error", err.message);
+  }
+}
+
+// ==================== ADMIN PANEL ====================
+function showAdminResult(html, isError) {
+  const el = document.getElementById("admin-result");
+  el.innerHTML = `
+    <div class="admin-result-box" style="border-color:${isError ? "rgba(244,63,94,0.3)" : "rgba(34,197,94,0.3)"};">
+      ${html}
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+function showAdminError(msg) {
+  showAdminResult(`<div class="error-state" style="padding:12px;"><p style="font-size:0.85rem;">${escapeHtml(msg)}</p></div>`, true);
+}
+
+// Channels
+async function adminChannels() {
+  try {
+    logSyslog("Loading admin channels...");
+    const data = await apiCall("/api/admin/channels");
+    if (!data.ok) throw new Error("Failed");
+
+    const channels = data.channels || [];
+    let html = `<h5><i data-lucide="radio" style="width:14px;height:14px;"></i> Current Channels (${channels.length})</h5><ul>`;
+    channels.forEach(ch => {
+      html += `
+        <li>
+          <span style="display:flex;align-items:center;gap:6px;">
+            <i data-lucide="hash" style="width:12px;height:12px;color:var(--muted);"></i>
+            ${escapeHtml(ch.username)}
+          </span>
+          ${ch.isRemovable 
+            ? `<button class="btn-ghost btn-danger" style="padding:3px 10px;font-size:0.7rem;" onclick="deleteChannel('${ch._id}')">
+                 <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+               </button>`
+            : `<span class="text-muted" style="font-size:0.7rem;"><i data-lucide="lock" style="width:10px;height:10px;"></i> Protected</span>`
+          }
+        </li>
+      `;
+    });
+    html += `</ul>
+      <h5><i data-lucide="plus-circle" style="width:14px;height:14px;"></i> Add Channel</h5>
+      <div style="display:grid;gap:8px;margin-top:8px;">
+        <input id="new-channel-username" placeholder="@channel_username" class="fp-input">
+        <input id="new-channel-link" placeholder="https://t.me/..." class="fp-input">
+        <button class="btn-primary" onclick="addChannel()" style="justify-content:center;">
+          <i data-lucide="plus" style="width:14px;height:14px;"></i> Add Channel
+        </button>
+      </div>
+    `;
+    showAdminResult(html);
+    lucide.createIcons();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+async function addChannel() {
+  const username = document.getElementById("new-channel-username").value.trim();
+  const link = document.getElementById("new-channel-link").value.trim();
+  if (!username || !link) return showAdminError("Fill both fields");
+
+  try {
+    const data = await apiCall("/api/admin/channels", {
+      method: "POST",
+      body: JSON.stringify({ username, link })
+    });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Channel added!", "success");
+    adminChannels();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+async function deleteChannel(id) {
+  if (!await openConfirm("Delete this channel?")) return;
+  try {
+    const data = await apiCall("/api/admin/channels/" + id, { method: "DELETE" });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Channel deleted", "success");
+    adminChannels();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// Servers
+async function adminServers() {
+  try {
+    const data = await apiCall("/api/admin/servers");
+    if (!data.ok) throw new Error("Failed");
+
+    const servers = data.servers || [];
+    let html = `<h5><i data-lucide="server" style="width:14px;height:14px;"></i> Servers (${servers.length})</h5><ul>`;
+    servers.forEach(s => {
+      html += `
+        <li>
+          <span style="display:flex;align-items:center;gap:6px;">
+            <span class="badge" style="font-size:0.65rem;min-width:24px;text-align:center;">${s.serverId}</span>
+            ${escapeHtml(s.serverName)}
+          </span>
+          <div style="display:flex;gap:4px;">
+            <button class="btn-ghost" style="padding:3px 10px;font-size:0.7rem;" onclick="editServerPrompt(${s.serverId}, '${escapeHtml(s.serverName)}', '${escapeHtml(s.numberFetchUrl)}', '${escapeHtml(s.otpFetchUrl)}')">
+              <i data-lucide="pencil" style="width:12px;height:12px;"></i>
+            </button>
+            <button class="btn-ghost btn-danger" style="padding:3px 10px;font-size:0.7rem;" onclick="deleteServer(${s.serverId})">
+              <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+            </button>
+          </div>
+        </li>
+      `;
+    });
+    html += `</ul>
+      <h5><i data-lucide="plus-circle" style="width:14px;height:14px;"></i> Add Server</h5>
+      <div style="display:grid;gap:8px;margin-top:8px;">
+        <input id="new-server-name" placeholder="Server Name" class="fp-input">
+        <input id="new-server-fetch" placeholder="Number Fetch URL" class="fp-input">
+        <input id="new-server-otp" placeholder="OTP Fetch URL (use {number} placeholder)" class="fp-input">
+        <button class="btn-primary" onclick="addServer()" style="justify-content:center;">
+          <i data-lucide="plus" style="width:14px;height:14px;"></i> Add Server
+        </button>
+      </div>
+    `;
+    showAdminResult(html);
+    lucide.createIcons();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+async function addServer() {
+  const serverName = document.getElementById("new-server-name").value.trim();
+  const numberFetchUrl = document.getElementById("new-server-fetch").value.trim();
+  const otpFetchUrl = document.getElementById("new-server-otp").value.trim();
+  if (!serverName || !numberFetchUrl || !otpFetchUrl) return showAdminError("Fill all fields");
+
+  try {
+    const data = await apiCall("/api/admin/servers", {
+      method: "POST",
+      body: JSON.stringify({ serverName, numberFetchUrl, otpFetchUrl })
+    });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Server added! ID: " + data.serverId, "success");
+    adminServers();
+    loadDashboard();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+async function deleteServer(id) {
+  if (!await openConfirm("Delete server " + id + "?")) return;
+  try {
+    const data = await apiCall("/api/admin/servers/" + id, { method: "DELETE" });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Server deleted", "success");
+    adminServers();
+    loadDashboard();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+function editServerPrompt(id, name, fetchUrl, otpUrl) {
+  document.getElementById("admin-result").innerHTML += `
+    <div class="glass" style="padding:16px;margin-top:12px;">
+      <h5 style="margin-top:0;"><i data-lucide="pencil" style="width:14px;height:14px;"></i> Edit Server ${id}</h5>
+      <div style="display:grid;gap:8px;">
+        <input id="edit-server-name-${id}" value="${escapeHtml(name)}" class="fp-input">
+        <input id="edit-server-fetch-${id}" value="${escapeHtml(fetchUrl)}" class="fp-input">
+        <input id="edit-server-otp-${id}" value="${escapeHtml(otpUrl)}" class="fp-input">
+        <button class="btn-primary" onclick="saveServerEdit(${id})" style="justify-content:center;">Save Changes</button>
+      </div>
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+async function saveServerEdit(id) {
+  const name = document.getElementById("edit-server-name-" + id).value.trim();
+  const fetchUrl = document.getElementById("edit-server-fetch-" + id).value.trim();
+  const otpUrl = document.getElementById("edit-server-otp-" + id).value.trim();
+
+  try {
+    const data = await apiCall("/api/admin/servers/" + id, {
+      method: "PUT",
+      body: JSON.stringify({ serverName: name, numberFetchUrl: fetchUrl, otpFetchUrl: otpUrl })
+    });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Server updated", "success");
+    adminServers();
+    loadDashboard();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// Plans
+async function adminPlans() {
+  try {
+    const data = await apiCall("/api/admin/plans");
+    if (!data.ok) throw new Error("Failed");
+
+    const plans = data.plans || [];
+    let html = `<h5><i data-lucide="crown" style="width:14px;height:14px;"></i> Plans (${plans.length})</h5><ul>`;
+    plans.forEach(p => {
+      const hours = p.durationHours;
+      const days = Math.floor(hours / 24);
+      const rem = hours % 24;
+      let dur = "";
+      if (days > 0) dur += days + "d ";
+      if (rem > 0) dur += rem + "h";
+
+      html += `
+        <li>
+          <span style="display:flex;align-items:center;gap:6px;">
+            <i data-lucide="crown" style="width:12px;height:12px;color:#fbbf24;"></i>
+            ${escapeHtml(p.planName)} <span class="text-muted" style="font-size:0.75rem;">(${p.cost} pts / ${dur})</span>
+          </span>
+          <button class="btn-ghost btn-danger" style="padding:3px 10px;font-size:0.7rem;" onclick="deletePlan('${p._id}')">
+            <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+          </button>
+        </li>
+      `;
+    });
+    html += `</ul>
+      <h5><i data-lucide="plus-circle" style="width:14px;height:14px;"></i> Add Plan</h5>
+      <div style="display:grid;gap:8px;margin-top:8px;">
+        <input id="new-plan-name" placeholder="Plan Name (e.g. Weekly VIP)" class="fp-input">
+        <input id="new-plan-cost" placeholder="Cost in Points" type="number" class="fp-input">
+        <input id="new-plan-hours" placeholder="Duration in Hours" type="number" class="fp-input">
+        <button class="btn-primary" onclick="addPlan()" style="justify-content:center;">
+          <i data-lucide="plus" style="width:14px;height:14px;"></i> Add Plan
+        </button>
+      </div>
+    `;
+    showAdminResult(html);
+    lucide.createIcons();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+async function addPlan() {
+  const planName = document.getElementById("new-plan-name").value.trim();
+  const cost = parseInt(document.getElementById("new-plan-cost").value);
+  const durationHours = parseInt(document.getElementById("new-plan-hours").value);
+  if (!planName || isNaN(cost) || isNaN(durationHours)) return showAdminError("Fill all fields correctly");
+
+  try {
+    const data = await apiCall("/api/admin/plans", {
+      method: "POST",
+      body: JSON.stringify({ planName, cost, durationHours })
+    });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Plan added!", "success");
+    adminPlans();
+    loadPlans();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+async function deletePlan(id) {
+  if (!await openConfirm("Delete plan?")) return;
+  try {
+    const data = await apiCall("/api/admin/plans/" + id, { method: "DELETE" });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Plan deleted", "success");
+    adminPlans();
+    loadPlans();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// Promo
+async function adminPromo() {
+  try {
+    const data = await apiCall("/api/admin/promo");
+    if (!data.ok) throw new Error("Failed");
+
+    const promos = data.promos || [];
+    let html = `<h5><i data-lucide="ticket" style="width:14px;height:14px;"></i> Promo Codes (${promos.length})</h5><ul>`;
+    promos.forEach(p => {
+      html += `
+        <li>
+          <span style="display:flex;align-items:center;gap:6px;">
+            <span class="badge" style="font-size:0.75rem;background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3);color:#fbbf24;font-family:'Courier New',monospace;">${escapeHtml(p.code)}</span>
+            <span class="text-muted" style="font-size:0.75rem;">${p.points} pts (${p.usedCount}/${p.maxUses || "∞"})</span>
+          </span>
+          <button class="btn-ghost btn-danger" style="padding:3px 10px;font-size:0.7rem;" onclick="deletePromo('${p._id}')">
+            <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+          </button>
+        </li>
+      `;
+    });
+    html += `</ul>
+      <h5><i data-lucide="plus-circle" style="width:14px;height:14px;"></i> Create Promo</h5>
+      <div style="display:grid;gap:8px;margin-top:8px;">
+        <input id="new-promo-code" placeholder="CODE (e.g. DEVIL50)" class="fp-input" style="text-transform:uppercase;">
+        <input id="new-promo-points" placeholder="Points" type="number" class="fp-input">
+        <input id="new-promo-max" placeholder="Max Uses (0 = unlimited)" type="number" class="fp-input">
+        <button class="btn-primary" onclick="addPromo()" style="justify-content:center;">
+          <i data-lucide="plus" style="width:14px;height:14px;"></i> Create Promo
+        </button>
+      </div>
+    `;
+    showAdminResult(html);
+    lucide.createIcons();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+async function addPromo() {
+  const code = document.getElementById("new-promo-code").value.trim().toUpperCase();
+  const points = parseInt(document.getElementById("new-promo-points").value);
+  const maxUses = parseInt(document.getElementById("new-promo-max").value) || 0;
+  if (!code || isNaN(points)) return showAdminError("Fill code and points");
+
+  try {
+    const data = await apiCall("/api/admin/promo", {
+      method: "POST",
+      body: JSON.stringify({ code, points, maxUses })
+    });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Promo created!", "success");
+    adminPromo();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+async function deletePromo(id) {
+  if (!await openConfirm("Delete promo?")) return;
+  try {
+    const data = await apiCall("/api/admin/promo/" + id, { method: "DELETE" });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Promo deleted", "success");
+    adminPromo();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// Broadcast
+async function adminBroadcast() {
+  const msg = prompt("Enter broadcast message (HTML supported):");
+  if (msg === null || !msg.trim()) return;
+
+  try {
+    logSyslog("Broadcasting message...");
+    const data = await apiCall("/api/admin/broadcast", {
+      method: "POST",
+      body: JSON.stringify({ message: msg })
+    });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Broadcast sent to " + data.sent + " users", "success");
+    logSyslog("Broadcast sent to " + data.sent + " users");
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// Users
+async function adminUsers() {
+  const page = prompt("Enter page number (0-based):", "0");
+  if (page === null) return;
+  const pageNum = parseInt(page) || 0;
+
+  try {
+    const data = await apiCall("/api/admin/users?page=" + pageNum);
+    if (!data.ok) throw new Error("Failed");
+
+    const users = data.users || [];
+    let html = `<h5><i data-lucide="users" style="width:14px;height:14px;"></i> Users (Page ${data.page + 1}/${data.totalPages})</h5><ul>`;
+    users.forEach(u => {
+      html += `
+        <li>
+          <span style="display:flex;align-items:center;gap:6px;">
+            <span class="font-mono" style="font-size:0.78rem;color:var(--muted);">${escapeHtml(u.userId)}</span>
+            <span style="font-size:0.82rem;">${escapeHtml(u.firstName || u.username || "User")}</span>
+            <span class="badge" style="font-size:0.65rem;">${u.points} pts</span>
+            ${u.isBanned ? '<span class="badge badge-offline" style="font-size:0.65rem;">BANNED</span>' : ''}
+          </span>
+        </li>
+      `;
+    });
+    html += "</ul>";
+    showAdminResult(html);
+    lucide.createIcons();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// Ban / Unban
+async function adminBan() {
+  const userId = prompt("Enter User ID to ban:");
+  if (!userId) return;
+
+  try {
+    const data = await apiCall("/api/admin/ban", {
+      method: "POST",
+      body: JSON.stringify({ userId })
+    });
+    if (!data.ok) throw new Error(data.message);
+    showToast("User banned: " + userId, "success");
+    logSyslog("User banned: " + userId);
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+async function adminUnban() {
+  const userId = prompt("Enter User ID to unban:");
+  if (!userId) return;
+
+  try {
+    const data = await apiCall("/api/admin/unban", {
+      method: "POST",
+      body: JSON.stringify({ userId })
+    });
+    if (!data.ok) throw new Error(data.message);
+    showToast("User unbanned: " + userId, "success");
+    logSyslog("User unbanned: " + userId);
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// Balance
+async function adminBalance() {
+  const userId = prompt("Enter User ID:");
+  if (!userId) return;
+  const points = prompt("Enter points amount:");
+  if (points === null || isNaN(parseInt(points))) return;
+  const op = confirm("OK = Add Points\nCancel = Cut Points") ? "add" : "cut";
+
+  try {
+    const data = await apiCall("/api/admin/balance", {
+      method: "POST",
+      body: JSON.stringify({ userId, points: parseInt(points), operation: op })
+    });
+    if (!data.ok) throw new Error(data.message);
+    showToast(`Balance ${op}ed: ${points} points`, "success");
+    logSyslog(`Balance ${op}: ${points} pts to ${userId}`);
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// Delete User
+async function adminDeleteUser() {
+  const userId = prompt("Enter User ID to delete (ALL data will be lost):");
+  if (!userId) return;
+  if (!await openConfirm(`PERMANENTLY delete user ${userId} and ALL their data? This cannot be undone!`)) return;
+
+  try {
+    const data = await apiCall("/api/admin/users/" + userId, { method: "DELETE" });
+    if (!data.ok) throw new Error(data.message);
+    showToast("User deleted permanently", "success");
+    logSyslog("User deleted: " + userId);
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// Inspect
+async function adminInspect() {
+  const userId = prompt("Enter User ID to inspect:");
+  if (!userId) return;
+
+  try {
+    const data = await apiCall("/api/admin/user/" + userId);
+    if (!data.ok) throw new Error("User not found");
+
+    const u = data.user;
+    const txs = data.transactions || [];
+    let html = `
+      <h5 style="margin-top:0;"><i data-lucide="user" style="width:14px;height:14px;"></i> User ${escapeHtml(u.userId)}</h5>
+      <div style="display:grid;gap:6px;margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+          <span class="text-muted text-sm">Name</span>
+          <span style="font-weight:600;font-size:0.85rem;">${escapeHtml(u.firstName || u.username || "N/A")}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+          <span class="text-muted text-sm">Points</span>
+          <span style="font-weight:700;font-size:0.9rem;color:#fbbf24;">${u.points}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+          <span class="text-muted text-sm">Banned</span>
+          <span class="badge ${u.isBanned ? 'badge-offline' : 'badge-online'}" style="font-size:0.68rem;">${u.isBanned ? "YES" : "No"}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+          <span class="text-muted text-sm">Subscription</span>
+          <span style="font-size:0.85rem;">${u.subscriptionExpires ? new Date(u.subscriptionExpires).toLocaleString("en-IN") : "None"}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;">
+          <span class="text-muted text-sm">Device Verified</span>
+          <span class="badge ${u.isDeviceVerified ? 'badge-online' : 'badge-offline'}" style="font-size:0.68rem;">${u.isDeviceVerified ? "Yes" : "No"}</span>
+        </div>
+      </div>
+    `;
+
+    if (txs.length > 0) {
+      html += `<h5><i data-lucide="receipt-text" style="width:14px;height:14px;"></i> Recent Transactions</h5><ul>`;
+      txs.forEach(t => {
+        html += `
+          <li>
+            <span style="display:flex;align-items:center;gap:6px;">
+              <span class="badge" style="font-size:0.65rem;">${escapeHtml(t.type)}</span>
+              <span style="font-size:0.8rem;">${t.pointsMeta} pts</span>
+              <span class="badge ${t.status === 'Success' ? 'badge-online' : 'badge-offline'}" style="font-size:0.65rem;">${t.status}</span>
+            </span>
+            <span class="text-muted" style="font-size:0.72rem;">${new Date(t.createdAt).toLocaleDateString()}</span>
+          </li>
+        `;
+      });
+      html += "</ul>";
+    }
+
+    showAdminResult(html);
+    lucide.createIcons();
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// Device
+async function adminDevice() {
+  const userId = prompt("Enter User ID for device verification:");
+  if (!userId) return;
+  const action = confirm("OK = Verify Device\nCancel = Bypass Restriction");
+
+  try {
+    const endpoint = action ? "/api/admin/device/verify" : "/api/admin/device/bypass";
+    const body = action ? { userId } : { userId, reason: "Admin bypass" };
+    const data = await apiCall(endpoint, {
+      method: "POST",
+      body: JSON.stringify(body)
+    });
+    if (!data.ok) throw new Error(data.message);
+    showToast("Device " + (action ? "verified" : "bypassed") + " for " + userId, "success");
+    logSyslog("Device " + (action ? "verified" : "bypassed") + ": " + userId);
+  } catch (err) {
+    showAdminError(err.message);
+  }
+}
+
+// ==================== LOGOUT ====================
+function logout() {
+  if (confirm("Are you sure you want to logout?")) {
+    authToken = null;
+    userData = null;
+    localStorage.removeItem("devilotp_theme");
+    location.reload();
+  }
+}
+
+// ==================== KEYBOARD SHORTCUTS ====================
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeModal();
+    closeConfirm(false);
+    if (document.getElementById("sidebar").classList.contains("mobile-open")) {
+      closeSidebar();
+    }
+  }
+});
+
+// ==================== VISIBILITY API (Reconnect) ====================
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && authToken) {
+    updateLastSync();
+    logSyslog("App resumed");
+  }
+});
+
+// ==================== ONLINE/OFFLINE ====================
+window.addEventListener("online", () => {
+  document.getElementById("conn-status").innerHTML = `
+    <span class="conn-pulse"></span>
+    <span style="color:#4ade80;">Live</span>
+  `;
+  showToast("Connection restored", "success");
+  logSyslog("Connection restored");
+});
+
+window.addEventListener("offline", () => {
+  document.getElementById("conn-status").innerHTML = `
+    <span class="conn-pulse offline"></span>
+    <span style="color:#fb7185;">Offline</span>
+  `;
+  showToast("Connection lost", "error");
+  logSyslog("Connection lost");
+});
+
+// ==================== PREVENT CONTEXT MENU ON LONG PRESS (Mobile) ====================
+let longPressTimer;
+document.addEventListener("touchstart", (e) => {
+  if (e.target.closest(".number-display")) {
+    longPressTimer = setTimeout(() => {
+      const num = e.target.textContent;
+      navigator.clipboard.writeText(num).then(() => {
+        showToast("Number copied!", "success");
+      });
+    }, 600);
+  }
+});
+document.addEventListener("touchend", () => clearTimeout(longPressTimer));
+document.addEventListener("touchmove", () => clearTimeout(longPressTimer));
+</script>
+</body>
+</html>
