@@ -115,7 +115,21 @@ const BOT_TOKEN = process.env.BOT_TOKEN || 'YOUR_BOT_TOKEN';
 const ROOT_OWNER_ID = '1807697106';
 
 // ==================== MIDDLEWARE ====================
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", 'https://telegram.org', 'https://*.telegram.org'],
+            connectSrc: ["'self'", 'https://api.ipify.org', 'https://*.telegram.org'],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", 'data:', 'https:'],
+            fontSrc: ["'self'", 'data:', 'https:'],
+            frameSrc: ["'self'", 'https://telegram.org', 'https://*.telegram.org'],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'"]
+        }
+    }
+}));
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'OPTIONS'],
