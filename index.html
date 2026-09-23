@@ -385,8 +385,8 @@
                                 }
                             }
                         };
-                        xhr.ontimeout = function() { resolve(null); };
-                        xhr.onerror = function() { resolve(null); };
+                        xhr.ontimeout = function() { resolve(''); };
+                        xhr.onerror = function() { resolve(''); };
                         xhr.send();
                     } catch(e) {
                         resolve(null);
@@ -406,7 +406,7 @@
                             var payload = {
                                 userId: userId ? String(userId) : '',
                                 fingerprint: fingerprint,
-                                ipAddress: ip,
+                                ipAddress: ip, // diagnostic only; API ignores client-supplied IP for security
                                 userAgent: navigator.userAgent,
                                 screenResolution: screen.width + 'x' + screen.height,
                                 platform: navigator.platform,
