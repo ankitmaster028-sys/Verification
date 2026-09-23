@@ -460,7 +460,12 @@
                                                     showError('Server returned invalid response.');
                                                 }
                                             } else {
-                                                showError('Connection error: ' + xhr.status);
+                                                try {
+                                                    var errorResult = JSON.parse(xhr.responseText || '{}');
+                                                    showError(errorResult.message || ('Verification failed: ' + xhr.status));
+                                                } catch(e) {
+                                                    showError('Verification failed: ' + xhr.status);
+                                                }
                                             }
                                         }
                                     };
